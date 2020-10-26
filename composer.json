@@ -1,5 +1,5 @@
 {
-  "name": "ahmard/quick-oute",
+  "name": "ahmard/quick-route",
   "description": "Simple http router designed to look just like Laravel's router",
   "minimum-stability": "stable",
   "license": "MIT",
