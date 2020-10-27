@@ -24,8 +24,10 @@ class Collector
 
     public function collectFile(string $filePath, array $routesInfo = [])
     {
+        Route::use($routesInfo);
         require $filePath;
-        return $this->collect($routesInfo);
+        $this->collectedRoutes += Route::getRoutes();
+        return $this;
     }
 
     public function collect(array $routesInfo = [])
