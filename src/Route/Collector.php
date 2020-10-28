@@ -109,7 +109,7 @@ class Collector
                 if (isset($parent['prefix'])) {
                     $parentPrefix = $parent['prefix'];
                     if (! empty($routeData['prefix'])) {
-                        $parentPrefix = $parentPrefix . $routeData['prefix'];
+                        $parentPrefix = $parentPrefix . ($routeData['prefix'] == '/' ? '' : $routeData['prefix']);
                     }
                 }
 
