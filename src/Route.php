@@ -11,8 +11,6 @@ use QuickRoute\Route\TheRoute;
  * @method static TheRoute name(string $name)
  * @method static TheRoute namespace(string $namespace)
  * @method static TheRoute middleware(string $middleware)
- * @method static TheRoute prepend(string $prefixToPrepend)
- * @method static TheRoute append(string $prefixToAppend)
  * @method static TheRoute group(callable $closure)
  * @method static TheRoute with(array $withDat)
  * @method static TheRoute get(string $route, $controller)
@@ -28,25 +26,21 @@ class Route
      */
     protected static array $called = [];
 
-    protected static TheRoute $theRouter;
-
-    protected static array $defaultRouteConfig = [];
-
     /**
      * @param string $name
      * @param array $args
      * @return TheRoute
      */
-    public static function __callStatic($name, $args)
+    public static function __callStatic(string $name, array $args)
     {
-        self::$theRouter = new TheRoute(self::$defaultRouteConfig);
-
-        return self::$theRouter->$name(...$args);
+        $router = new TheRoute();
+        self::$called[] = $router;
+        return $router->$name(...$args);
     }
 
-    public static function use(array $theRoute)
+    public static function restart()
     {
-        self::$defaultRouteConfig = $theRoute;
+        self::$called = [];
     }
 
     /**
@@ -56,10 +50,5 @@ class Route
     public static function getRoutes(): array
     {
         return self::$called;
-    }
-
-    public static function addRoute(TheRoute $route)
-    {
-        self::$called[] = $route;
     }
 }

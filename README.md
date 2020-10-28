@@ -1,6 +1,10 @@
 # QuickRoute
 An elegant http router built on top of [FastRoute](https://github.com/nikic/FastRoute) to provide more easy of use.
 
+## Information
+Due to object-sharing between routes introduced in version 1, some errors cannot be fixed.
+<br/>
+Here is version 2, which is object-sharing free.
 
 ## Installation
 ```bash
@@ -13,16 +17,38 @@ Simple example
 ```php
 use QuickRoute\Route;
 use QuickRoute\Route\Collector;
+use QuickRoute\Route\Dispatcher;
 
-Route::get('/', function (){
+require('vendor/autoload.php');
+
+Route::get('/', function () {
     echo 'Hello world';
 });
 
-$collector = Collector::create()
-    ->collect()
-    ->register();
+$method = $_SERVER['REQUEST_METHOD'];
+$path = $_SERVER['REQUEST_URI'];
+if (false !== $pos = strpos($path, '?')) {
+    $uri = substr($path, 0, $pos);
+}
+$path = rawurldecode($path);
 
-$routes = $collector->getCollectedRoutes();
+
+$collector = Collector::create()->collect()->register();
+
+$dispatcher = Dispatcher::create($collector)->dispatch($method, $path);
+
+switch (true) {
+    case $dispatcher->isFound():
+        $routeData = $dispatcher->getRoute();
+        $routeData['controller']($dispatcher->getUrlParameters());
+        break;
+    case $dispatcher->isNotFound():
+        echo "Page not found";
+        break;
+    case $dispatcher->isMethodNotAllowed():
+        echo "Request method not allowed";
+        break;
+}
 ```
 
 Controller-like example
@@ -35,31 +61,14 @@ Route::get('/home', 'MainController@home');
 Advance usage
 ```php
 use QuickRoute\Route;
-use QuickRoute\RouteInterface;
 
 Route::prefix('user')->name('user.')
     ->namespace('User')
     ->middleware('UserMiddleware')
-    ->group(function (RouteInterface $route){
-        $route->get('profile', 'UserController@profile');
-        $route->put('update', 'UserController@update');
+    ->group(function (){
+        Route::get('profile', 'UserController@profile');
+        Route::put('update', 'UserController@update');
     });
-```
-
-More advance usage
-```php
-use QuickRoute\Route;
-use QuickRoute\RouteInterface;
-
-Route::prefix('notes')->name('notes.')
-    ->prepend('api')
-    ->append('{token}')
-    ->namespace('User')
-    ->group(function (RouteInterface $route){
-        $route->post('add', 'NotesController@add')->name('add');
-        $route->put('{noteId}', 'NotesController@update')->name('update');
-    });
-    
 ```
 
 Routes as configuration

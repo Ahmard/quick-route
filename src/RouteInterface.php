@@ -39,20 +39,6 @@ interface RouteInterface
     public function name(string $name): RouteInterface;
 
     /**
-     * Prepend string to nn url
-     * @param string $prefixToPrepend
-     * @return $this
-     */
-    public function prepend(string $prefixToPrepend): RouteInterface;
-
-    /**
-     * Append string to url
-     * @param string $prefixToAppend
-     * @return $this
-     */
-    public function append(string $prefixToAppend): RouteInterface;
-
-    /**
      *
      * @param string $route
      * @param mixed $controller

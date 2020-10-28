@@ -20,23 +20,9 @@ class TheRoute implements RouteInterface
     private string $name = '';
     private string $append = '';
     private string $prepend = '';
-    private string $method;
-    private $controller;
-
-    public function __construct(array $withData = [])
-    {
-        if ($withData) {
-            $this->isWithUsed = true;
-            $this->namespace = $withData['namespace'] ?? '';
-            $this->name = $withData['name'] ?? '';
-            $this->prefix = $withData['prefix'] ?? '';
-            $this->controller = $withData['controller'] ?? '';
-            $this->middleware = $withData['middleware'] ?? '';
-            $this->method = $withData['method'] ?? '';
-            $this->prepend = $withData['prepend'] ?? '';
-            $this->append = $withData['append'] ?? '';
-        }
-    }
+    private string $method = '';
+    private $controller = '';
+    private $group = null;
 
     /**
      * Retrieve controllers defined in this object
@@ -55,6 +41,7 @@ class TheRoute implements RouteInterface
             'name' => $this->name,
             'prepend' => $this->prepend,
             'append' => $this->append,
+            'group' => $this->group,
         ];
     }
 
@@ -64,22 +51,66 @@ class TheRoute implements RouteInterface
      */
     public function prefix(string $prefix): self
     {
-        if ($this->prefix && !$this->isWithUsed) {
-            $newRouter = new self([
-                'namespace' => $this->namespace,
-                'prefix' => $this->buildPrefix($this->prefix, $prefix),
-                'name' => $this->name,
-                'middleware' => $this->middleware,
-                'prepend' => $this->prepend,
-                'append' => $this->append,
-            ]);
+        $this->prefix = $prefix;
+        return $this;
+    }
 
-            Route::addRoute($newRouter);
+    /**
+     * Group controllers
+     * @param callable $closure
+     * @return TheRoute $this
+     */
+    public function group(callable $closure): self
+    {
+        $this->group = $closure;
+        return $this;
+    }
 
-            return $newRouter;
+    /**
+     * Add namespace to listener groups
+     * @param string $namespace
+     * @return $this
+     */
+    public function namespace(string $namespace): self
+    {
+        if ($namespace[strlen($namespace) - 1] !== "\\") {
+            $namespace .= "\\";
         }
+        $this->namespace = $namespace;
+        return $this;
+    }
 
-        $this->prefix = $this->buildPrefix($this->prefix, $prefix);
+    /**
+     * Add name to listener groups
+     * @param string $name
+     * @return $this
+     */
+    public function name(string $name): self
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * Set middleware to the route
+     * @param string $middleware
+     * @return $this
+     */
+    public function middleware(string $middleware): self
+    {
+        $this->middleware = $middleware;
+        return $this;
+    }
+
+    /**
+     * Register route in this class
+     * @return $this
+     */
+    public function onRegister(): RouteInterface
+    {
+        if ($this->prefix[0] != '/') {
+            $this->prefix = '/' . $this->prefix;
+        }
 
         return $this;
     }
@@ -111,91 +142,6 @@ class TheRoute implements RouteInterface
     }
 
     /**
-     * Group controllers
-     * @param callable $closure
-     * @return TheRoute $this
-     */
-    public function group(callable $closure): self
-    {
-        $closure($this);
-        return $this;
-    }
-
-    /**
-     * Add namespace to listener groups
-     * @param string $namespace
-     * @return $this
-     */
-    public function namespace(string $namespace): self
-    {
-        if ($namespace[strlen($namespace) - 1] !== "\\") {
-            $namespace .= "\\";
-        }
-        $this->namespace .= $namespace;
-        return $this;
-    }
-
-    /**
-     * Add name to listener groups
-     * @param string $name
-     * @return $this
-     */
-    public function name(string $name): self
-    {
-        $this->name .= $name;
-        return $this;
-    }
-
-    /**
-     * Set middleware to the route
-     * @param string $middleware
-     * @return $this
-     */
-    public function middleware(string $middleware): self
-    {
-        $this->middleware .= $middleware;
-        return $this;
-    }
-
-    /**
-     * Prepend string to nn url
-     * @param string $prefixToPrepend
-     * @return $this
-     */
-    public function prepend(string $prefixToPrepend): self
-    {
-        $this->prepend .= $prefixToPrepend;
-        return $this;
-    }
-
-    /**
-     * Append string to url
-     * @param string $prefixToAppend
-     * @return $this
-     */
-    public function append(string $prefixToAppend): self
-    {
-        $this->append .= $prefixToAppend;
-        return $this;
-    }
-
-    /**
-     * Register route in this class
-     * @return $this
-     */
-    public function onRegister(): RouteInterface
-    {
-        $this->prefix = $this->buildPrefix($this->prepend, $this->prefix);
-        $this->prefix = $this->buildPrefix($this->prefix, $this->append);
-
-        if ($this->prefix[0] != '/') {
-            $this->prefix = '/' . $this->prefix;
-        }
-
-        return $this;
-    }
-
-    /**
      * Listen to route
      * @param string $method
      * @param string $route
@@ -204,20 +150,10 @@ class TheRoute implements RouteInterface
      */
     public function add(string $method, string $route, $controllerClass): self
     {
-        $newRouter = new self([
-            'namespace' => $this->namespace,
-            'prefix' => $this->buildPrefix($this->prefix, $route),
-            'name' => $this->name,
-            'prepend' => $this->prepend,
-            'append' => $this->append,
-            'method' => $method,
-            'controller' => $controllerClass,
-            'middleware' => $this->middleware,
-        ]);
-
-        Route::addRoute($newRouter);
-
-        return $newRouter;
+        $this->method = $method;
+        $this->prefix = $this->buildPrefix($this->prefix, $route);
+        $this->controller = $controllerClass;
+        return $this;
     }
 
 }
