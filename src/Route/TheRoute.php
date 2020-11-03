@@ -130,7 +130,7 @@ class TheRoute implements RouteInterface
      */
     public function onRegister(): RouteInterface
     {
-        if ($this->prefix[0] != '/') {
+        if (substr($this->prefix, 0, 1) != '/') {
             $this->prefix = '/' . $this->prefix;
         }
 

@@ -285,7 +285,7 @@ final class Collector
      * @param string|null $prefix2
      * @return string
      */
-    protected function buildPrefix(?string $prefix1, ?string $prefix2)
+    private function buildPrefix(?string $prefix1, ?string $prefix2)
     {
         $prefix2 = $this->removeTrailingSlash($prefix2);
         if ($prefix2 && $prefix2 != '/') {
@@ -300,7 +300,7 @@ final class Collector
      * @param string|null $prefix
      * @return false|string|null
      */
-    protected function removeTrailingSlash(?string $prefix)
+    private function removeTrailingSlash(?string $prefix)
     {
         $totalStr = strlen($prefix) - 1;
         if ($totalStr > 0) {
@@ -313,6 +313,15 @@ final class Collector
             }
         }
 
+        return $this->removeRootSlash($prefix);
+    }
+    
+    private function removeRootSlash(string $prefix)
+    {
+        if(substr($prefix, 0, 1) == '/'){
+            return $this->removeRootSlash(substr($prefix, 1, strlen($prefix)));
+        }
+
         return $prefix;
     }
 
@@ -322,7 +331,7 @@ final class Collector
      * @param string $key
      * @return string
      */
-    protected function getNullableString(array $array, string $key)
+    private function getNullableString(array $array, string $key)
     {
         return $array[$key] ?? '';
     }
