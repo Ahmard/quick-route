@@ -51,14 +51,14 @@ switch (true) {
 }
 ```
 
-Controller-like example
+#### Controller-like example
 ```php
 use QuickRoute\Route;
 
 Route::get('/home', 'MainController@home');
 ```
 
-Advance usage
+#### Advance usage
 ```php
 use QuickRoute\Route;
 
@@ -71,7 +71,23 @@ Route::prefix('user')->name('user.')
     });
 ```
 
-Routes as configuration
+#### More Advance Usage
+```php
+use QuickRoute\Route;
+
+Route::prefix('user')
+    ->prepend('api')
+    ->append('{token}')
+    ->middleware('UserMiddleware')
+    ->group(function (){
+        Route::get('profile', 'UserController@profile');
+        Route::put('update', 'UserController@update');
+    });
+
+// => /api/user/{token}
+```
+
+#### Routes as configuration
 ```php
 //routes.php
 use QuickRoute\Route;
@@ -88,6 +104,34 @@ $collector = Collector::create()
     ->register();
 
 $routes = $collector->getCollectedRoutes();
+```
+
+#### Caching
+Caching will be updated after the file set to be collected is modified.
+<br/>Caching only works with **QuickRoute\Route\Collector::collectFile** method at the moment.
+```php
+use QuickRoute\Route\Collector;
+
+$collector = Collector::create()
+    ->collectFile('routes.php')
+    ->cache('path/to/save/cache.php', 'path/to/save/caching-definitions.json')
+    ->register();
+
+$routes = $collector->getCollectedRoutes();
+```
+
+#### Passing Default Data
+You can alternatively pass data to be prepended to all routes.
+<br/>
+If you have caching turned on, you most clear cached routes manually after setting/updating default route data.
+```php
+use QuickRoute\Route\Collector;
+
+$collector = Collector::create()->collectFile('api-routes.php', [
+    'prefix' => 'api',
+    'name' => 'api.',
+    'namespace' => 'Api\\'
+])->register();
 ```
 
 ## Licence

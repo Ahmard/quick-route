@@ -30,8 +30,15 @@ class Dispatcher
      */
     public function dispatch(string $method, string $path): DispatchResult
     {
-        //Remove trailing forward slash
         $lengthPath = strlen($path) - 1;
+
+        //Remove slash at route's prefix beginning
+        if($path[0] == '/'){
+            $path = substr($path,1, $lengthPath);
+            $lengthPath--;
+        }
+
+        //Remove trailing forward slash
         if ($lengthPath > 1 && $path[$lengthPath] == '/') {
             $path = substr($path, 0, $lengthPath);
         }
@@ -44,9 +51,9 @@ class Dispatcher
 
     /**
      * Set your own dispatcher
-     * @param FastDispatcher $dispatcher
+     * @param string $dispatcher A class namespace implementing \FastRoute\Dispatcher
      */
-    public function setDispatcher(FastDispatcher $dispatcher): void
+    public function setDispatcher(string $dispatcher): void
     {
         $this->dispatcher = $dispatcher;
     }
@@ -56,11 +63,16 @@ class Dispatcher
      */
     private function createDispatcher()
     {
-        if(! isset($this->dispatcher)){
+        if (!isset($this->dispatcher)) {
             $this->dispatcher = GroupCountBased::class;
         }
 
         $dispatcher = $this->dispatcher;
-        return (new $dispatcher($this->collector->getFastRouteCollector()->getData()));
+
+        $routeData = $this->collector->getCachedRoutes();
+        if(empty($routeData)){
+            $routeData = $this->collector->getFastRouteCollector()->getData();
+        }
+        return (new $dispatcher($routeData));
     }
 }

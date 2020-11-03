@@ -2,7 +2,6 @@
 
 namespace QuickRoute\Route;
 
-use QuickRoute\Route;
 use QuickRoute\RouteInterface;
 
 class TheRoute implements RouteInterface
@@ -46,12 +45,35 @@ class TheRoute implements RouteInterface
     }
 
     /**
+     * Give a group of routes a prefix
      * @param string $prefix
      * @return TheRoute $this
      */
     public function prefix(string $prefix): self
     {
         $this->prefix = $prefix;
+        return $this;
+    }
+
+    /**
+     * Append string of prefix to route
+     * @param string $prefix
+     * @return TheRoute $this
+     */
+    public function append(string $prefix): self
+    {
+        $this->append = $prefix;
+        return $this;
+    }
+
+    /**
+     * Prepend string of prefix to route
+     * @param string $prefix
+     * @return TheRoute $this
+     */
+    public function prepend(string $prefix): self
+    {
+        $this->prepend = $prefix;
         return $this;
     }
 
@@ -67,7 +89,7 @@ class TheRoute implements RouteInterface
     }
 
     /**
-     * Add namespace to listener groups
+     * Add namespace to group
      * @param string $namespace
      * @return $this
      */
@@ -81,7 +103,7 @@ class TheRoute implements RouteInterface
     }
 
     /**
-     * Add name to listener groups
+     * Add name to route groups
      * @param string $name
      * @return $this
      */
@@ -115,32 +137,6 @@ class TheRoute implements RouteInterface
         return $this;
     }
 
-    protected function buildPrefix(string $prefix1, string $prefix2)
-    {
-        $prefix2 = $this->removeTrailingSlash($prefix2);
-        if ($prefix2 && $prefix2 != '/') {
-            return $prefix1 . '/' . $prefix2;
-        }
-
-        return empty($prefix1) ? '/' : $prefix1;
-    }
-
-    protected function removeTrailingSlash(string $prefix)
-    {
-        $totalStr = strlen($prefix) - 1;
-        if ($totalStr > 0) {
-            if ($prefix[$totalStr] == '/' && $totalStr != 0) {
-                $prefix = substr($prefix, 0, $totalStr);
-            }
-
-            if ($prefix[0] == '/' && $totalStr != 0) {
-                $prefix = substr($prefix, 1, $totalStr + 1);
-            }
-        }
-
-        return $prefix;
-    }
-
     /**
      * Listen to route
      * @param string $method
@@ -151,7 +147,7 @@ class TheRoute implements RouteInterface
     public function add(string $method, string $route, $controllerClass): self
     {
         $this->method = $method;
-        $this->prefix = $this->buildPrefix($this->prefix, $route);
+        $this->prefix = $route;
         $this->controller = $controllerClass;
         return $this;
     }
