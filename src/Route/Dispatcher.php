@@ -32,15 +32,13 @@ class Dispatcher
     {
         $lengthPath = strlen($path) - 1;
 
-        //Remove slash at route's prefix beginning
-        if($path[0] == '/'){
-            $path = substr($path,1, $lengthPath);
-            $lengthPath--;
+        //Remove trailing forward slash
+        if ($lengthPath > 0 && $path[$lengthPath] == '/') {
+            $path = substr($path, 0, $lengthPath);
         }
 
-        //Remove trailing forward slash
-        if ($lengthPath > 1 && $path[$lengthPath] == '/') {
-            $path = substr($path, 0, $lengthPath);
+        if (substr($path, 0, 1) != '/'){
+            $path = '/' . $path;
         }
 
         $urlData = $this->createDispatcher()

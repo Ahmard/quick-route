@@ -107,8 +107,9 @@ $routes = $collector->getCollectedRoutes();
 ```
 
 #### Caching
-Caching will be updated after the file set to be collected is modified.
-<br/>Caching only works with **QuickRoute\Route\Collector::collectFile** method at the moment.
+Cache routes so that they don't have to be collected every time.
+<br/>Caching will be updated after the file set to be collected is modified.
+<br/>Caching only works when file is collected, that is when **QuickRoute\Route\Collector::collectFile** is used.
 ```php
 use QuickRoute\Route\Collector;
 
@@ -133,6 +134,11 @@ $collector = Collector::create()->collectFile('api-routes.php', [
     'namespace' => 'Api\\'
 ])->register();
 ```
+
+#### Note
+You must be careful when using **Collector::collect()** and **Collector::collectFile()** together, 
+as collectFile method will clear previously collected routes before it starts collecting.<br/>
+Make sure that you call **Collector::collect()** first, before calling **Collector::collectFile()**.
 
 ## Licence
 **QuickRoute** is _MIT_ licenced.
