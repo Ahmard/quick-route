@@ -159,10 +159,10 @@ class Getter
     {
         $prefix2 = $this->removeTrailingSlash($prefix2);
         if ($prefix2 && $prefix2 != '/') {
-            return $prefix1 . '/' . $prefix2;
+            return ($prefix1 ? $prefix1 . '/' : '') . $prefix2;
         }
 
-        return empty($prefix1) ? '/' : $prefix1;
+        return $prefix1;
     }
 
     /**
