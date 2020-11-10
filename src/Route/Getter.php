@@ -13,22 +13,28 @@ use QuickRoute\Route;
  */
 class Getter
 {
+    /**
+     * @var array[]
+     */
     private array $routes;
 
+    /**
+     * @var mixed[]
+     */
     private array $routeDefaultData = [];
 
-    public static function create()
+    public static function create(): self
     {
         return new self();
     }
 
     /**
      * Retrieve routes
-     * @param array $routes
-     * @param array $defaultData
-     * @return array
+     * @param TheRoute[] $routes
+     * @param array[] $defaultData
+     * @return array[]
      */
-    public function get(array $routes, array $defaultData = [])
+    public function get(array $routes, array $defaultData = []): array
     {
         $this->routeDefaultData = $defaultData;
 
@@ -42,9 +48,9 @@ class Getter
     /**
      * Loop through routes
      * @param TheRoute[] $routes
-     * @return array
+     * @return array[]
      */
-    private function loop(array $routes)
+    private function loop(array $routes): array
     {
         $results = [];
 
@@ -63,10 +69,10 @@ class Getter
 
     /**
      * Build route structure
-     * @param array $routes
-     * @param array $parent
+     * @param array[] $routes
+     * @param string[] $parent
      */
-    private function build(array $routes, array $parent = [])
+    private function build(array $routes, array $parent = []): void
     {
         foreach ($routes as $route) {
             $routeData = $route['route'];
@@ -142,7 +148,7 @@ class Getter
      * @param callable $callback
      * @return TheRoute[]
      */
-    private function getGroup(callable $callback)
+    private function getGroup(callable $callback): array
     {
         Route::restart();
         $callback();
@@ -151,11 +157,11 @@ class Getter
 
     /**
      * Carefully join two prefix together
-     * @param string|null $prefix1
-     * @param string|null $prefix2
+     * @param string $prefix1
+     * @param string $prefix2
      * @return string
      */
-    private function buildPrefix(?string $prefix1, ?string $prefix2)
+    private function buildPrefix(string $prefix1, string $prefix2): string
     {
         $prefix2 = $this->removeTrailingSlash($prefix2);
         if ($prefix2 && $prefix2 != '/') {
@@ -167,10 +173,10 @@ class Getter
 
     /**
      * Remove slash at the end of prefix
-     * @param string|null $prefix
-     * @return string|null
+     * @param string $prefix
+     * @return string
      */
-    private function removeTrailingSlash(?string $prefix)
+    private function removeTrailingSlash(string $prefix): string
     {
         $prefixLength = strlen($prefix) - 1;
         if ($prefixLength > 0 && $prefix[$prefixLength] == '/') {
@@ -185,7 +191,7 @@ class Getter
      * @param string $prefix
      * @return string
      */
-    private function removeRootSlash(string $prefix)
+    private function removeRootSlash(string $prefix): string
     {
         if (substr($prefix, 0, 1) == '/') {
             return $this->removeRootSlash(substr($prefix, 1, strlen($prefix)));
@@ -196,11 +202,11 @@ class Getter
 
     /**
      * Retrieve string from an array
-     * @param array $array
+     * @param string[] $array
      * @param string $key
      * @return string
      */
-    private function getNullableString(array $array, string $key)
+    private function getNullableString(array $array, string $key): string
     {
         return $array[$key] ?? '';
     }

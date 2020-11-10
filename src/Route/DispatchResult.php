@@ -8,8 +8,15 @@ use FastRoute\Dispatcher as FastDispatcher;
 
 class DispatchResult
 {
+    /**
+     * @var mixed[]
+     */
     private array $dispatchResult;
 
+    /**
+     * DispatchResult constructor.
+     * @param string[] $dispatchResult
+     */
     public function __construct(array $dispatchResult)
     {
         $this->dispatchResult = $dispatchResult;
@@ -54,7 +61,7 @@ class DispatchResult
 
     /**
      * Get found url class
-     * @return array
+     * @return array[]
      */
     public function getRoute(): array
     {

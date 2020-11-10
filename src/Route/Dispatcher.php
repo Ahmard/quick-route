@@ -12,7 +12,7 @@ class Dispatcher
 
     private Collector $collector;
 
-    public static function create(Collector $collector)
+    public static function create(Collector $collector): self
     {
         return new self($collector);
     }
@@ -24,13 +24,19 @@ class Dispatcher
 
     /**
      * Dispatch url routing
-     * @param string $method
-     * @param string $path
+     * @param string $method Route method - It will be converted to uppercase
+     * @param string $path Route url path - All data passed to url parameter after "?" will be discarded
      * @return DispatchResult
      */
     public function dispatch(string $method, string $path): DispatchResult
     {
         $lengthPath = strlen($path) - 1;
+
+        //Make url convertible
+        if (false !== $pos = strpos($path, '?')) {
+            $path = substr($path, 0, $pos);
+        }
+        $path = rawurldecode($path);
 
         //Remove trailing forward slash
         if ($lengthPath > 0 && $path[$lengthPath] == '/') {
@@ -66,11 +72,8 @@ class Dispatcher
         }
 
         $dispatcher = $this->dispatcher;
+        $routeData = $this->collector->getFastRouteData();
 
-        $routeData = $this->collector->getCachedRoutes();
-        if(empty($routeData)){
-            $routeData = $this->collector->getFastRouteCollector()->getData();
-        }
         return (new $dispatcher($routeData));
     }
 }

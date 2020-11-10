@@ -19,6 +19,7 @@ use QuickRoute\Route\TheRoute;
  * @method static TheRoute put(string $route, $controller) Register this route as PUT
  * @method static TheRoute patch(string $route, $controller) Register this route as PATCH
  * @method static TheRoute delete(string $route, $controller) Register this route as DELETE
+ * @method static TheRoute head(string $route, $controller) Register this route as HEAD
  */
 class Route
 {
@@ -29,7 +30,7 @@ class Route
 
     /**
      * @param string $name
-     * @param array $args
+     * @param string[] $args
      * @return TheRoute
      */
     public static function __callStatic(string $name, array $args)
@@ -50,7 +51,7 @@ class Route
 
     /**
      * Get all registered routers
-     * @return array
+     * @return TheRoute[]
      */
     public static function getRoutes(): array
     {

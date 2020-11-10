@@ -12,18 +12,55 @@ class Collector
 {
     private FastRouteCollector $collector;
 
+    /**
+     * List of routes to be collected
+     * @var mixed[]
+     */
+    private array $collectableRoutes = [];
+
+    /**
+     * List of collected routes
+     * @var array[]
+     */
     private array $collectedRoutes = [];
 
-    private ?string $cacheFileDest;
+    /**
+     * A directory where cache will be saved
+     * @var string
+     */
+    private string $cacheDirectory = '';
 
-    private ?string $cacheDictionary;
+    /**
+     * A json file that will holds cache definitions
+     * @var string
+     */
+    private string $cacheDefinitionFile = '';
 
+    /**
+     * List of found cached routes
+     * @var array[]
+     */
     private array $cachedRoutes = [];
 
-    private array $routesToCollect = [];
+    /**
+     * A fast-route compatible route data
+     * @var array[]
+     */
+    private array $fastRouteData = [];
+
+    /**
+     * An indicator whether cache will collected
+     * This is important as to not re-collect routes by calling different methods that invoke doCollectRoute() method
+     * @var bool
+     */
+    private bool $willCollect = false;
 
 
-    public static function create()
+    /**
+     * Create an instance of collector
+     * @return Collector
+     */
+    public static function create(): self
     {
         return new self();
     }
@@ -31,12 +68,13 @@ class Collector
     /**
      * Collect routes in file
      * @param string $filePath
-     * @param array $routesInfo
+     * @param mixed[] $routesInfo
      * @return $this
      */
-    public function collectFile(string $filePath, array $routesInfo = [])
+    public function collectFile(string $filePath, array $routesInfo = []): self
     {
-        $this->routesToCollect[] = [
+        $this->willCollect = true;
+        $this->collectableRoutes[] = [
             'file' => $filePath,
             'data' => $routesInfo,
         ];
@@ -46,12 +84,13 @@ class Collector
 
     /**
      * Collect routes
-     * @param array $routesInfo
+     * @param mixed[] $routesInfo
      * @return $this
      */
-    public function collect(array $routesInfo = [])
+    public function collect(array $routesInfo = []): self
     {
-        $this->routesToCollect[] = [
+        $this->willCollect = true;
+        $this->collectableRoutes[] = [
             'data' => $routesInfo,
         ];
 
@@ -60,73 +99,93 @@ class Collector
 
     /**
      * Cache this group
-     * @param string $cacheFileDest
-     * @param string|null $cacheDictionary
+     * @param string $cacheDirectory
+     * @param string $cacheDefinitionFile
      * @return $this
      */
-    public function cache(string $cacheFileDest, ?string $cacheDictionary = null)
+    public function cache(string $cacheDirectory, string $cacheDefinitionFile = ''): self
     {
-        $this->cacheFileDest = $cacheFileDest;
-        $this->cacheDictionary = $cacheDictionary;
+        $this->cacheDirectory = $cacheDirectory;
+        $this->cacheDefinitionFile = $cacheDefinitionFile;
         return $this;
     }
 
-    private function doCollectRoutes()
+    /**
+     * Perform route collection
+     * @return void
+     */
+    private function doCollectRoutes(): void
     {
-        //Clear previously collected routes
-        $this->collectedRoutes = [];
+        if(! $this->willCollect){
+            return;
+        }
 
-        foreach ($this->routesToCollect as $routeToCollect){
-            if (isset($routeToCollect['file'])) {
-                //Clear previously collected routes
-                Route::restart();
-                //Collect routes in file
-                require $routeToCollect['file'];
-                $this->collectedRoutes = array_merge(
-                    $this->collectedRoutes,
-                    Getter::create()->get(Route::getRoutes(), $routeToCollect['data'])
-                );
+        Cache::setCacheDefinitionFile($this->cacheDefinitionFile);
+
+        foreach ($this->collectableRoutes as $collectableRoute) {
+            $collectableFile = $collectableRoute['file'] ?? null;
+            if (isset($collectableFile)) {
+                $cachedVersion = null;
+                $cacheName = $collectableFile;
+
+                if (isset($this->cacheDirectory)) {
+                    $cachedVersion = Cache::get($collectableFile, $this->cacheDirectory);
+                }
+
+                //No cache found, add to collected
+                if (empty($cachedVersion)) {
+                    Route::restart();
+                    require $collectableFile;
+                    //Store collected routes
+                    $this->collectedRoutes[$cacheName] = Getter::create()->get(
+                        Route::getRoutes(),
+                        $collectableRoute['data']
+                    );
+                } //Cache found, add to cached
+                else {
+                    $this->cachedRoutes[$cacheName] = $cachedVersion;
+                }
             } else {
-                //Collect defined
-                $this->collectedRoutes = array_merge(
-                    $this->collectedRoutes,
-                    Getter::create()->get(Route::getRoutes(), $routeToCollect['data'])
+                $this->collectedRoutes['__regular__'] = Getter::create()->get(
+                    Route::getRoutes(),
+                    $collectableRoute['data']
                 );
             }
         }
+
+        $this->willCollect = false;
     }
 
     /**
      * Register routes to FastRoute
      * @return $this
      */
-    public function register()
+    public function register(): self
     {
-        if (isset($this->cacheFileDest) && isset($this->fileToCollect)) {
-            //Set cache dictionary
-            Cache::setCacheDictionaryFile($this->cacheDictionary);
+        $this->doCollectRoutes();
 
-            $fastRouteData = Cache::get($this->fileToCollect, $this->cacheFileDest);
+        $fastRouteData = [];
+        foreach ($this->collectedRoutes as $collectableFile => $collectedRoutes) {
+            $fastRouteCollector = $this->getFastRouteCollector(true);
+            foreach ($collectedRoutes as $collectedRoute){
+                $fastRouteCollector->addRoute($collectedRoute['method'], $collectedRoute['prefix'], $collectedRoute);
+            }
 
-            if (is_array($fastRouteData)) {
-                $this->cachedRoutes += $fastRouteData;
+            $fastRouteData = array_merge_recursive($fastRouteData, $fastRouteCollector->getData());
+
+            //Save cache, if cache is enabled and cache is loaded from file
+            if (
+                '__regular__' !== $collectableFile
+                && is_string($collectableFile)
+                && '' !== $this->cacheDirectory
+            ){
+                Cache::create($collectableFile, $this->cacheDirectory, $fastRouteCollector->getData());
             }
         }
 
-        if (empty($fastRouteData)) {
-            //Collect routes
-            $this->doCollectRoutes();
-
-            //Register route to Nikita's fast route.
-            foreach ($this->collectedRoutes as $routeData) {
-                $this->getFastRouteCollector()->addRoute(strtoupper($routeData['method']), $routeData['prefix'], $routeData);
-            }
-
-            //Since no version of current file is cached
-            //Lets cache it now
-            if (isset($this->cacheFileDest) && isset($this->fileToCollect)) {
-                Cache::createCache($this->fileToCollect, $this->cacheFileDest, $this->getFastRouteCollector()->getData());
-            }
+        $this->fastRouteData = $fastRouteData;
+        foreach ($this->cachedRoutes as $name => $cachedRoutes){
+            $this->fastRouteData = array_merge_recursive($this->fastRouteData, $cachedRoutes);
         }
 
         return $this;
@@ -134,35 +193,47 @@ class Collector
 
     /**
      * Get collected routes, array of routes
-     * @return array
+     * @return array[]
      */
     public function getCollectedRoutes(): array
     {
-        //Collect routes
         $this->doCollectRoutes();
-
         return $this->collectedRoutes;
     }
 
     /**
-     * @return array
+     * @return array[]
      */
     public function getCachedRoutes(): array
     {
+        $this->doCollectRoutes();
         return $this->cachedRoutes;
     }
 
     /**
      * Get FastRoute's route collector
+     * @param bool $createNew
      * @return FastRouteCollector
      */
-    public function getFastRouteCollector(): FastRouteCollector
+    public function getFastRouteCollector(bool $createNew = false): FastRouteCollector
     {
-        if (!isset($this->collector)) {
+        if (isset($this->collector)){
+            if ($createNew){
+                $this->collector = new FastRouteCollector(new Std(), new GroupCountBased());
+            }
+        }else {
             $this->collector = new FastRouteCollector(new Std(), new GroupCountBased());
         }
 
         return $this->collector;
     }
 
+    /**
+     * Get computed route
+     * @return array[]
+     */
+    public function getFastRouteData(): array
+    {
+        return $this->fastRouteData;
+    }
 }

@@ -20,12 +20,20 @@ class TheRoute implements RouteInterface
     private string $append = '';
     private string $prepend = '';
     private string $method = '';
-    private $controller = '';
-    private $group = null;
+
+    /**
+     * @var mixed Route controller/handler
+     */
+    private $controller;
+
+    /**
+     * @var callable Route group
+     */
+    private $group;
 
     /**
      * Retrieve controllers defined in this object
-     * @return array
+     * @return mixed[]
      */
     public function getRouteData(): array
     {
@@ -49,7 +57,7 @@ class TheRoute implements RouteInterface
      * @param string $prefix
      * @return TheRoute $this
      */
-    public function prefix(string $prefix): self
+    public function prefix(string $prefix): RouteInterface
     {
         $this->prefix = $prefix;
         return $this;
@@ -60,7 +68,7 @@ class TheRoute implements RouteInterface
      * @param string $prefix
      * @return TheRoute $this
      */
-    public function append(string $prefix): self
+    public function append(string $prefix): RouteInterface
     {
         $this->append = $prefix;
         return $this;
@@ -71,7 +79,7 @@ class TheRoute implements RouteInterface
      * @param string $prefix
      * @return TheRoute $this
      */
-    public function prepend(string $prefix): self
+    public function prepend(string $prefix): RouteInterface
     {
         $this->prepend = $prefix;
         return $this;
@@ -82,7 +90,7 @@ class TheRoute implements RouteInterface
      * @param callable $closure
      * @return TheRoute $this
      */
-    public function group(callable $closure): self
+    public function group(callable $closure): RouteInterface
     {
         $this->group = $closure;
         return $this;
@@ -93,7 +101,7 @@ class TheRoute implements RouteInterface
      * @param string $namespace
      * @return $this
      */
-    public function namespace(string $namespace): self
+    public function namespace(string $namespace): RouteInterface
     {
         if ($namespace[strlen($namespace) - 1] !== "\\") {
             $namespace .= "\\";
@@ -107,7 +115,7 @@ class TheRoute implements RouteInterface
      * @param string $name
      * @return $this
      */
-    public function name(string $name): self
+    public function name(string $name): RouteInterface
     {
         $this->name = $name;
         return $this;
@@ -118,7 +126,7 @@ class TheRoute implements RouteInterface
      * @param string $middleware
      * @return $this
      */
-    public function middleware(string $middleware): self
+    public function middleware(string $middleware): RouteInterface
     {
         $this->middleware = $middleware;
         return $this;
@@ -144,7 +152,7 @@ class TheRoute implements RouteInterface
      * @param callable|string $controllerClass
      * @return TheRoute $this
      */
-    public function add(string $method, string $route, $controllerClass): self
+    public function add(string $method, string $route, $controllerClass): RouteInterface
     {
         $this->method = $method;
         $this->prefix = $route;

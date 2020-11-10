@@ -39,7 +39,7 @@ interface RouteInterface
     public function name(string $name): RouteInterface;
 
     /**
-     *
+     * Add GET to route collection
      * @param string $route
      * @param mixed $controller
      * @return $this
@@ -47,7 +47,7 @@ interface RouteInterface
     public function get(string $route, $controller): RouteInterface;
 
     /**
-     *
+     * Add POST to route collection
      * @param string $route
      * @param mixed $controller
      * @return $this
@@ -55,7 +55,7 @@ interface RouteInterface
     public function post(string $route, $controller): RouteInterface;
 
     /**
-     *
+     * Add PUT to route collection
      * @param string $route
      * @param mixed $controller
      * @return $this
@@ -63,7 +63,7 @@ interface RouteInterface
     public function put(string $route, $controller): RouteInterface;
 
     /**
-     *
+     * Add PATCH to route collection
      * @param string $route
      * @param mixed $controller
      * @return $this
@@ -71,7 +71,7 @@ interface RouteInterface
     public function patch(string $route, $controller): RouteInterface;
 
     /**
-     *
+     * Add DELETE to route collection
      * @param string $route
      * @param mixed $controller
      * @return $this
@@ -79,10 +79,18 @@ interface RouteInterface
     public function delete(string $route, $controller): RouteInterface;
 
     /**
-     * Retrieve registered routes
-     * @return array
+     * Add HEAD to route collection
+     * @param string $route
+     * @param mixed $controller
+     * @return $this
      */
-    public function getRouteData(): array;
+    public function head(string $route, $controller): RouteInterface;
+
+    /**
+     * Retrieve registered routes
+     * @return string[]
+     */
+    public function getRouteData();
 
     /**
      * Register route to nikita popov's router
