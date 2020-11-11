@@ -128,7 +128,7 @@ class Collector
                 $cachedVersion = null;
                 $cacheName = $collectableFile;
 
-                if (isset($this->cacheDirectory)) {
+                if ('' != $this->cacheDirectory) {
                     $cachedVersion = Cache::get($collectableFile, $this->cacheDirectory);
                 }
 

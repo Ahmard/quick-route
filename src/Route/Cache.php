@@ -84,6 +84,10 @@ class Cache
      */
     private static function getCacheDictionary()
     {
+        if (empty(self::$cacheDefinitionFile)){
+            return [];
+        }
+
         if (!file_exists(self::$cacheDefinitionFile)) {
             touch(self::$cacheDefinitionFile);
         }
