@@ -22,9 +22,9 @@ class TheRoute implements RouteInterface
     private string $method = '';
 
     /**
-     * @var mixed Route controller/handler
+     * @var mixed Route handler/handler
      */
-    private $controller;
+    private $handler;
 
     /**
      * @var callable Route group
@@ -32,7 +32,7 @@ class TheRoute implements RouteInterface
     private $group;
 
     /**
-     * Retrieve controllers defined in this object
+     * Retrieve handlers defined in this object
      * @return mixed[]
      */
     public function getRouteData(): array
@@ -42,7 +42,7 @@ class TheRoute implements RouteInterface
         return [
             'prefix' => $this->prefix,
             'namespace' => $this->namespace,
-            'controller' => $this->controller,
+            'handler' => $this->handler,
             'middleware' => $this->middleware,
             'method' => $this->method,
             'name' => $this->name,
@@ -86,7 +86,7 @@ class TheRoute implements RouteInterface
     }
 
     /**
-     * Group controllers
+     * Group handlers
      * @param callable $closure
      * @return TheRoute $this
      */
@@ -149,14 +149,14 @@ class TheRoute implements RouteInterface
      * Listen to route
      * @param string $method
      * @param string $route
-     * @param callable|string $controllerClass
+     * @param callable|string $handlerClass
      * @return TheRoute $this
      */
-    public function add(string $method, string $route, $controllerClass): RouteInterface
+    public function add(string $method, string $route, $handlerClass): RouteInterface
     {
         $this->method = $method;
         $this->prefix = $route;
-        $this->controller = $controllerClass;
+        $this->handler = $handlerClass;
         return $this;
     }
 

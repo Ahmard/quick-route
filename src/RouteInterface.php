@@ -41,50 +41,50 @@ interface RouteInterface
     /**
      * Add GET to route collection
      * @param string $route
-     * @param mixed $controller
+     * @param mixed $handler
      * @return $this
      */
-    public function get(string $route, $controller): RouteInterface;
+    public function get(string $route, $handler): RouteInterface;
 
     /**
      * Add POST to route collection
      * @param string $route
-     * @param mixed $controller
+     * @param mixed $handler
      * @return $this
      */
-    public function post(string $route, $controller): RouteInterface;
+    public function post(string $route, $handler): RouteInterface;
 
     /**
      * Add PUT to route collection
      * @param string $route
-     * @param mixed $controller
+     * @param mixed $handler
      * @return $this
      */
-    public function put(string $route, $controller): RouteInterface;
+    public function put(string $route, $handler): RouteInterface;
 
     /**
      * Add PATCH to route collection
      * @param string $route
-     * @param mixed $controller
+     * @param mixed $handler
      * @return $this
      */
-    public function patch(string $route, $controller): RouteInterface;
+    public function patch(string $route, $handler): RouteInterface;
 
     /**
      * Add DELETE to route collection
      * @param string $route
-     * @param mixed $controller
+     * @param mixed $handler
      * @return $this
      */
-    public function delete(string $route, $controller): RouteInterface;
+    public function delete(string $route, $handler): RouteInterface;
 
     /**
      * Add HEAD to route collection
      * @param string $route
-     * @param mixed $controller
+     * @param mixed $handler
      * @return $this
      */
-    public function head(string $route, $controller): RouteInterface;
+    public function head(string $route, $handler): RouteInterface;
 
     /**
      * Retrieve registered routes

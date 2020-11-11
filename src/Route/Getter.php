@@ -104,7 +104,7 @@ class Getter
                     ),
                     'namespace' => $this->getNullableString($parent, 'namespace') . $routeData['namespace'],
                     'name' => $this->getNullableString($parent, 'name') . $routeData['name'],
-                    'controller' => $routeData['controller'],
+                    'handler' => $routeData['handler'],
                     'method' => $routeData['method'],
                     'middleware' => ($parentMiddleware ?? $routeData['middleware']),
                 ];

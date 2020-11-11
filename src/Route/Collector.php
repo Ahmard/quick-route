@@ -163,27 +163,45 @@ class Collector
     public function register(): self
     {
         $this->doCollectRoutes();
+        $rootFastCollector = $this->getFastRouteCollector(true);
 
-        $fastRouteData = [];
         foreach ($this->collectedRoutes as $collectableFile => $collectedRoutes) {
-            $fastRouteCollector = $this->getFastRouteCollector(true);
-            foreach ($collectedRoutes as $collectedRoute){
-                $fastRouteCollector->addRoute($collectedRoute['method'], $collectedRoute['prefix'], $collectedRoute);
+
+            $hasCache = function () use ($collectableFile){
+                return(
+                    '__regular__' !== $collectableFile
+                    && is_string($collectableFile)
+                    && '' !== $this->cacheDirectory
+                );
+            };
+
+            /**
+             * Instantiate cache collector
+             * @var FastRouteCollector $cacheFastCollector
+             */
+            $cacheFastCollector = null;
+            if ($hasCache()){
+                $cacheFastCollector = $this->getFastRouteCollector(true);
             }
 
-            $fastRouteData = array_merge_recursive($fastRouteData, $fastRouteCollector->getData());
+            foreach ($collectedRoutes as $collectedRoute){
+                //Register to root collector
+                $rootFastCollector->addRoute($collectedRoute['method'], $collectedRoute['prefix'], $collectedRoute);
+
+                //Register to cache collector
+                if ($hasCache()){
+                    $cacheFastCollector->addRoute($collectedRoute['method'], $collectedRoute['prefix'], $collectedRoute);
+                }
+            }
 
             //Save cache, if cache is enabled and cache is loaded from file
-            if (
-                '__regular__' !== $collectableFile
-                && is_string($collectableFile)
-                && '' !== $this->cacheDirectory
-            ){
-                Cache::create($collectableFile, $this->cacheDirectory, $fastRouteCollector->getData());
+            if ($hasCache()){
+                Cache::create($collectableFile, $this->cacheDirectory, $cacheFastCollector->getData());
             }
         }
 
-        $this->fastRouteData = $fastRouteData;
+        $this->fastRouteData = $rootFastCollector->getData();
+
         foreach ($this->cachedRoutes as $name => $cachedRoutes){
             $this->fastRouteData = array_merge_recursive($this->fastRouteData, $cachedRoutes);
         }

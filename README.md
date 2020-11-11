@@ -40,7 +40,7 @@ $dispatcher = Dispatcher::create($collector)->dispatch($method, $path);
 switch (true) {
     case $dispatcher->isFound():
         $routeData = $dispatcher->getRoute();
-        $routeData['controller']($dispatcher->getUrlParameters());
+        $routeData['handler']($dispatcher->getUrlParameters());
         break;
     case $dispatcher->isNotFound():
         echo "Page not found";
@@ -136,9 +136,10 @@ $collector = Collector::create()->collectFile('api-routes.php', [
 ```
 
 #### Note
-You must be careful when using **Collector::collect()** and **Collector::collectFile()** together, 
+- You must be careful when using **Collector::collect()** and **Collector::collectFile()** together, 
 as collectFile method will clear previously collected routes before it starts collecting.<br/>
 Make sure that you call **Collector::collect()** first, before calling **Collector::collectFile()**.
 
+- If you turn caching on, you cannot use object or any type of callable in route handler.
 ## Licence
 **QuickRoute** is _MIT_ licenced.
