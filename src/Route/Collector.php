@@ -163,9 +163,12 @@ class Collector
     public function register(): self
     {
         $this->doCollectRoutes();
+        $hasCollectedRoutes = false;
         $rootFastCollector = $this->getFastRouteCollector(true);
 
         foreach ($this->collectedRoutes as $collectableFile => $collectedRoutes) {
+
+            $hasCollectedRoutes = true;
 
             $hasCache = function () use ($collectableFile){
                 return(
@@ -200,7 +203,9 @@ class Collector
             }
         }
 
-        $this->fastRouteData = $rootFastCollector->getData();
+        if ($hasCollectedRoutes){
+            $this->fastRouteData = $rootFastCollector->getData();
+        }
 
         foreach ($this->cachedRoutes as $name => $cachedRoutes){
             $this->fastRouteData = array_merge_recursive($this->fastRouteData, $cachedRoutes);
