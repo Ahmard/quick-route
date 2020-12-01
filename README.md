@@ -123,14 +123,12 @@ $routes = $collector->getCollectedRoutes();
 
 #### Caching
 Cache routes so that they don't have to be collected every time.
-<br/>Caching will be updated after the file set to be collected is modified.
-<br/>Caching only works when file is collected, that is when **QuickRoute\Route\Collector::collectFile** is used.
 ```php
 use QuickRoute\Route\Collector;
 
 $collector = Collector::create()
     ->collectFile('routes.php')
-    ->cache('path/to/save/cache.php', 'path/to/save/caching-definitions.json')
+    ->cache('path/to/save/cache.php')
     ->register();
 
 $routes = $collector->getCollectedRoutes();
