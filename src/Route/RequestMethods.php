@@ -9,62 +9,50 @@ use QuickRoute\RouteInterface;
 trait RequestMethods
 {
     /**
-     * @param string $route
-     * @param mixed $handler
-     * @return RouteInterface $this
+     * @inheritDoc
      */
     public function get(string $route, $handler): RouteInterface
     {
-        return $this->add('GET', $route, $handler);
+        return $this->addRoute('GET', $route, $handler);
     }
 
     /**
-     * @param string $route
-     * @param mixed $handler
-     * @return RouteInterface $this
+     * @inheritDoc
      */
     public function post(string $route, $handler): RouteInterface
     {
-        return $this->add('POST', $route, $handler);
+        return $this->addRoute('POST', $route, $handler);
     }
 
     /**
-     * @param string $route
-     * @param mixed $handler
-     * @return RouteInterface $this
+     * @inheritDoc
      */
     public function patch(string $route, $handler): RouteInterface
     {
-        return $this->add('PATCH', $route, $handler);
+        return $this->addRoute('PATCH', $route, $handler);
     }
 
     /**
-     * @param string $route
-     * @param mixed $handler
-     * @return RouteInterface $this
+     * @inheritDoc
      */
     public function put(string $route, $handler): RouteInterface
     {
-        return $this->add('PUT', $route, $handler);
+        return $this->addRoute('PUT', $route, $handler);
     }
 
     /**
-     * @param string $route
-     * @param mixed $handler
-     * @return RouteInterface $this
+     * @inheritDoc
      */
     public function delete(string $route, $handler): RouteInterface
     {
-        return $this->add('DELETE', $route, $handler);
+        return $this->addRoute('DELETE', $route, $handler);
     }
 
     /**
-     * @param string $route
-     * @param mixed $handler
-     * @return RouteInterface $this
+     * @inheritDoc
      */
     public function head(string $route, $handler): RouteInterface
     {
-        return $this->add('HEAD', $route, $handler);
+        return $this->addRoute('HEAD', $route, $handler);
     }
 }

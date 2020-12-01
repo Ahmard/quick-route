@@ -87,6 +87,21 @@ Route::prefix('user')
 // => /api/user/{token}
 ```
 
+#### Route Fields
+Fields help to add more description to route or group of routes
+```php
+use QuickRoute\Route;
+
+Route::prefix('user')
+    ->middleware('User')
+    ->addField('specie', 'human')
+    ->group(function (){
+        Route::get('type', 'admin')->addField('permissions', 'all');
+        Route::get('g', 3);
+    });
+
+```
+
 #### Routes as configuration
 ```php
 //routes.php

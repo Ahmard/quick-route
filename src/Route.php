@@ -20,6 +20,7 @@ use QuickRoute\Route\TheRoute;
  * @method static TheRoute patch(string $route, $handler) Register this route as PATCH
  * @method static TheRoute delete(string $route, $handler) Register this route as DELETE
  * @method static TheRoute head(string $route, $handler) Register this route as HEAD
+ * @method static TheRoute addField(string $name, $handler) Add field of data route collection
  */
 class Route
 {

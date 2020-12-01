@@ -12,14 +12,14 @@ class Dispatcher
 
     private Collector $collector;
 
-    public static function create(Collector $collector): self
-    {
-        return new self($collector);
-    }
-
     public function __construct(Collector $collector)
     {
         $this->collector = $collector;
+    }
+
+    public static function create(Collector $collector): self
+    {
+        return new self($collector);
     }
 
     /**
@@ -43,7 +43,7 @@ class Dispatcher
             $path = substr($path, 0, $lengthPath);
         }
 
-        if (substr($path, 0, 1) != '/'){
+        if (substr($path, 0, 1) != '/') {
             $path = '/' . $path;
         }
 
@@ -51,15 +51,6 @@ class Dispatcher
             ->dispatch(strtoupper($method), $path);
 
         return new DispatchResult($urlData);
-    }
-
-    /**
-     * Set your own dispatcher
-     * @param string $dispatcher A class namespace implementing \FastRoute\Dispatcher
-     */
-    public function setDispatcher(string $dispatcher): void
-    {
-        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -75,5 +66,14 @@ class Dispatcher
         $routeData = $this->collector->getFastRouteData();
 
         return (new $dispatcher($routeData));
+    }
+
+    /**
+     * Set your own dispatcher
+     * @param string $dispatcher A class namespace implementing \FastRoute\Dispatcher
+     */
+    public function setDispatcher(string $dispatcher): void
+    {
+        $this->dispatcher = $dispatcher;
     }
 }

@@ -12,7 +12,7 @@ class TheRoute implements RouteInterface
     use RequestMethods;
 
 
-    public bool $isWithUsed = false;
+    private bool $isWithUsed = false;
     private string $prefix = '';
     private string $namespace = '';
     private string $middleware = '';
@@ -20,6 +20,7 @@ class TheRoute implements RouteInterface
     private string $append = '';
     private string $prepend = '';
     private string $method = '';
+    private array $fields = [];
 
     /**
      * @var mixed Route handler/handler
@@ -32,8 +33,7 @@ class TheRoute implements RouteInterface
     private $group;
 
     /**
-     * Retrieve handlers defined in this object
-     * @return mixed[]
+     * @inheritDoc
      */
     public function getRouteData(): array
     {
@@ -49,92 +49,12 @@ class TheRoute implements RouteInterface
             'prepend' => $this->prepend,
             'append' => $this->append,
             'group' => $this->group,
+            'fields' => $this->fields,
         ];
     }
 
     /**
-     * Give a group of routes a prefix
-     * @param string $prefix
-     * @return TheRoute $this
-     */
-    public function prefix(string $prefix): RouteInterface
-    {
-        $this->prefix = $prefix;
-        return $this;
-    }
-
-    /**
-     * Append string of prefix to route
-     * @param string $prefix
-     * @return TheRoute $this
-     */
-    public function append(string $prefix): RouteInterface
-    {
-        $this->append = $prefix;
-        return $this;
-    }
-
-    /**
-     * Prepend string of prefix to route
-     * @param string $prefix
-     * @return TheRoute $this
-     */
-    public function prepend(string $prefix): RouteInterface
-    {
-        $this->prepend = $prefix;
-        return $this;
-    }
-
-    /**
-     * Group handlers
-     * @param callable $closure
-     * @return TheRoute $this
-     */
-    public function group(callable $closure): RouteInterface
-    {
-        $this->group = $closure;
-        return $this;
-    }
-
-    /**
-     * Add namespace to group
-     * @param string $namespace
-     * @return $this
-     */
-    public function namespace(string $namespace): RouteInterface
-    {
-        if ($namespace[strlen($namespace) - 1] !== "\\") {
-            $namespace .= "\\";
-        }
-        $this->namespace = $namespace;
-        return $this;
-    }
-
-    /**
-     * Add name to route groups
-     * @param string $name
-     * @return $this
-     */
-    public function name(string $name): RouteInterface
-    {
-        $this->name = $name;
-        return $this;
-    }
-
-    /**
-     * Set middleware to the route
-     * @param string $middleware
-     * @return $this
-     */
-    public function middleware(string $middleware): RouteInterface
-    {
-        $this->middleware = $middleware;
-        return $this;
-    }
-
-    /**
-     * Register route in this class
-     * @return $this
+     * @inheritDoc
      */
     public function onRegister(): RouteInterface
     {
@@ -146,13 +66,79 @@ class TheRoute implements RouteInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function prefix(string $prefix): RouteInterface
+    {
+        $this->prefix = $prefix;
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function append(string $prefix): RouteInterface
+    {
+        $this->append = $prefix;
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function prepend(string $prefix): RouteInterface
+    {
+        $this->prepend = $prefix;
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function group(callable $closure): RouteInterface
+    {
+        $this->group = $closure;
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function namespace(string $namespace): RouteInterface
+    {
+        if ($namespace[strlen($namespace) - 1] !== "\\") {
+            $namespace .= "\\";
+        }
+        $this->namespace = $namespace;
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function name(string $name): RouteInterface
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function middleware(string $middleware): RouteInterface
+    {
+        $this->middleware = $middleware;
+        return $this;
+    }
+
+    /**
      * Listen to route
      * @param string $method
      * @param string $route
      * @param callable|string $handlerClass
      * @return TheRoute $this
      */
-    public function add(string $method, string $route, $handlerClass): RouteInterface
+    private function addRoute(string $method, string $route, $handlerClass): RouteInterface
     {
         $this->method = $method;
         $this->prefix = $route;
@@ -160,4 +146,12 @@ class TheRoute implements RouteInterface
         return $this;
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function addField(string $name, $value): RouteInterface
+    {
+        $this->fields[$name] = $value;
+        return $this;
+    }
 }

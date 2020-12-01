@@ -25,16 +25,10 @@ class Collector
     private array $collectedRoutes = [];
 
     /**
-     * A directory where cache will be saved
+     * A file to save cache in
      * @var string
      */
-    private string $cacheDirectory = '';
-
-    /**
-     * A json file that will holds cache definitions
-     * @var string
-     */
-    private string $cacheDefinitionFile = '';
+    private string $cacheFile = '';
 
     /**
      * List of found cached routes
@@ -99,61 +93,13 @@ class Collector
 
     /**
      * Cache this group
-     * @param string $cacheDirectory
-     * @param string $cacheDefinitionFile
+     * @param string $cacheFile
      * @return $this
      */
-    public function cache(string $cacheDirectory, string $cacheDefinitionFile = ''): self
+    public function cache(string $cacheFile): self
     {
-        $this->cacheDirectory = $cacheDirectory;
-        $this->cacheDefinitionFile = $cacheDefinitionFile;
+        $this->cacheFile = $cacheFile;
         return $this;
-    }
-
-    /**
-     * Perform route collection
-     * @return void
-     */
-    private function doCollectRoutes(): void
-    {
-        if(! $this->willCollect){
-            return;
-        }
-
-        Cache::setCacheDefinitionFile($this->cacheDefinitionFile);
-
-        foreach ($this->collectableRoutes as $collectableRoute) {
-            $collectableFile = $collectableRoute['file'] ?? null;
-            if (isset($collectableFile)) {
-                $cachedVersion = null;
-                $cacheName = $collectableFile;
-
-                if ('' != $this->cacheDirectory) {
-                    $cachedVersion = Cache::get($collectableFile, $this->cacheDirectory);
-                }
-
-                //No cache found, add to collected
-                if (empty($cachedVersion)) {
-                    Route::restart();
-                    require $collectableFile;
-                    //Store collected routes
-                    $this->collectedRoutes[$cacheName] = Getter::create()->get(
-                        Route::getRoutes(),
-                        $collectableRoute['data']
-                    );
-                } //Cache found, add to cached
-                else {
-                    $this->cachedRoutes[$cacheName] = $cachedVersion;
-                }
-            } else {
-                $this->collectedRoutes['__regular__'] = Getter::create()->get(
-                    Route::getRoutes(),
-                    $collectableRoute['data']
-                );
-            }
-        }
-
-        $this->willCollect = false;
     }
 
     /**
@@ -163,55 +109,83 @@ class Collector
     public function register(): self
     {
         $this->doCollectRoutes();
-        $hasCollectedRoutes = false;
         $rootFastCollector = $this->getFastRouteCollector(true);
 
-        foreach ($this->collectedRoutes as $collectableFile => $collectedRoutes) {
-
-            $hasCollectedRoutes = true;
-
-            $hasCache = function () use ($collectableFile){
-                return(
-                    '__regular__' !== $collectableFile
-                    && is_string($collectableFile)
-                    && '' !== $this->cacheDirectory
-                );
-            };
-
-            /**
-             * Instantiate cache collector
-             * @var FastRouteCollector $cacheFastCollector
-             */
-            $cacheFastCollector = null;
-            if ($hasCache()){
-                $cacheFastCollector = $this->getFastRouteCollector(true);
-            }
-
-            foreach ($collectedRoutes as $collectedRoute){
-                //Register to root collector
-                $rootFastCollector->addRoute($collectedRoute['method'], $collectedRoute['prefix'], $collectedRoute);
-
-                //Register to cache collector
-                if ($hasCache()){
-                    $cacheFastCollector->addRoute($collectedRoute['method'], $collectedRoute['prefix'], $collectedRoute);
-                }
-            }
-
-            //Save cache, if cache is enabled and cache is loaded from file
-            if ($hasCache()){
-                Cache::create($collectableFile, $this->cacheDirectory, $cacheFastCollector->getData());
-            }
+        if (!empty($this->cachedRoutes)) {
+            $this->fastRouteData = $this->cachedRoutes;
+            return $this;
         }
 
-        if ($hasCollectedRoutes){
-            $this->fastRouteData = $rootFastCollector->getData();
+        foreach ($this->collectedRoutes as $collectedRoute) {
+            //Register to root collector
+            $rootFastCollector->addRoute($collectedRoute['method'], $collectedRoute['prefix'], $collectedRoute);
         }
 
-        foreach ($this->cachedRoutes as $name => $cachedRoutes){
-            $this->fastRouteData = array_merge_recursive($this->fastRouteData, $cachedRoutes);
+        $this->fastRouteData = $rootFastCollector->getData();
+
+        if (empty($this->cachedRoutes) && '' != $this->cacheFile) {
+            Cache::create($this->cacheFile, $this->fastRouteData);
         }
 
         return $this;
+    }
+
+    /**
+     * Perform route collection
+     * @return void
+     */
+    private function doCollectRoutes(): void
+    {
+        if (!$this->willCollect) {
+            return;
+        }
+
+        if ('' != $this->cacheFile) {
+            $cachedVersion = Cache::get($this->cacheFile);
+        }
+
+        if (!empty($cachedVersion)) {
+            $this->cachedRoutes = $cachedVersion;
+            return;
+        }
+
+        foreach ($this->collectableRoutes as $collectableRoute) {
+            $collectableFile = $collectableRoute['file'] ?? null;
+            if (isset($collectableFile)) {
+                Route::restart();
+                require $collectableFile;
+                //Store collected routes
+                $this->collectedRoutes = array_merge($this->collectedRoutes, Getter::create()->get(
+                    Route::getRoutes(),
+                    $collectableRoute['data']
+                ));
+            } else {
+                $this->collectedRoutes = array_merge($this->collectedRoutes, Getter::create()->get(
+                    Route::getRoutes(),
+                    $collectableRoute['data']
+                ));
+            }
+        }
+
+        $this->willCollect = false;
+    }
+
+    /**
+     * Get FastRoute's route collector
+     * @param bool $createNew
+     * @return FastRouteCollector
+     */
+    public function getFastRouteCollector(bool $createNew = false): FastRouteCollector
+    {
+        if (isset($this->collector)) {
+            if ($createNew) {
+                $this->collector = new FastRouteCollector(new Std(), new GroupCountBased());
+            }
+        } else {
+            $this->collector = new FastRouteCollector(new Std(), new GroupCountBased());
+        }
+
+        return $this->collector;
     }
 
     /**
@@ -231,24 +205,6 @@ class Collector
     {
         $this->doCollectRoutes();
         return $this->cachedRoutes;
-    }
-
-    /**
-     * Get FastRoute's route collector
-     * @param bool $createNew
-     * @return FastRouteCollector
-     */
-    public function getFastRouteCollector(bool $createNew = false): FastRouteCollector
-    {
-        if (isset($this->collector)){
-            if ($createNew){
-                $this->collector = new FastRouteCollector(new Std(), new GroupCountBased());
-            }
-        }else {
-            $this->collector = new FastRouteCollector(new Std(), new GroupCountBased());
-        }
-
-        return $this->collector;
     }
 
     /**

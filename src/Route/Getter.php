@@ -68,6 +68,18 @@ class Getter
     }
 
     /**
+     * Get routes grouped together
+     * @param callable $callback
+     * @return TheRoute[]
+     */
+    private function getGroup(callable $callback): array
+    {
+        Route::restart();
+        $callback();
+        return Route::getRoutes();
+    }
+
+    /**
      * Build route structure
      * @param array[] $routes
      * @param string[] $parent
@@ -107,6 +119,7 @@ class Getter
                     'handler' => $routeData['handler'],
                     'method' => $routeData['method'],
                     'middleware' => ($parentMiddleware ?? $routeData['middleware']),
+                    'fields' => array_merge_recursive($parent['fields'] ?? [], $routeData['fields']),
                 ];
 
                 if (!empty($routeData['method'])) {
@@ -116,14 +129,14 @@ class Getter
                     $ready['prefix'] = $prefix;
 
                     //If default data is passed
-                    if (! empty($this->routeDefaultData)) {
+                    if (!empty($this->routeDefaultData)) {
                         $ready['prefix'] = $this->buildPrefix(($this->routeDefaultData['prefix'] ?? ''), $ready['prefix']);
                         $ready['namespace'] = ($this->routeDefaultData['namespace'] ?? '') . $ready['namespace'];
                         $ready['name'] = ($this->routeDefaultData['name'] ?? '') . $ready['name'];
                         if (isset($this->routeDefaultData['middleware'])) {
                             $ready['middleware'] = $this->routeDefaultData['middleware'] . ($ready['middleware'] ? '|' . $ready['middleware'] : '');
                         }
-                    }else{
+                    } else {
                         $ready['prefix'] = $this->removeRootSlash($ready['prefix']);
                     }
 
@@ -141,18 +154,6 @@ class Getter
 
             }
         }
-    }
-
-    /**
-     * Get routes grouped together
-     * @param callable $callback
-     * @return TheRoute[]
-     */
-    private function getGroup(callable $callback): array
-    {
-        Route::restart();
-        $callback();
-        return Route::getRoutes();
     }
 
     /**
