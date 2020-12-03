@@ -52,7 +52,7 @@ class DispatchResult
 
     /**
      * Get dispatched url parameters
-     * @return mixed|null
+     * @return array|null
      */
     public function getUrlParameters()
     {
@@ -61,10 +61,10 @@ class DispatchResult
 
     /**
      * Get found url class
-     * @return array[]
+     * @return RouteData
      */
-    public function getRoute(): array
+    public function getRoute(): RouteData
     {
-        return $this->dispatchResult[1] ?? [];
+        return new RouteData($this->dispatchResult[1] ?? []);
     }
 }

@@ -6,6 +6,11 @@ namespace QuickRoute\Route;
 
 use QuickRoute\RouteInterface;
 
+/**
+ * Trait RequestMethods
+ * @package QuickRoute\Route
+ * @internal For internal use only
+ */
 trait RequestMethods
 {
     /**

@@ -3,7 +3,11 @@
 
 namespace QuickRoute\Route;
 
-
+/**
+ * Class Cache
+ * @package QuickRoute\Route
+ * @internal for internal use only
+ */
 class Cache
 {
     /**
