@@ -16,7 +16,7 @@ trait RequestMethods
     /**
      * @inheritDoc
      */
-    public function get(string $route, $handler): RouteInterface
+    public function get(string $route, callable $handler): RouteInterface
     {
         return $this->addRoute('GET', $route, $handler);
     }
@@ -24,7 +24,7 @@ trait RequestMethods
     /**
      * @inheritDoc
      */
-    public function post(string $route, $handler): RouteInterface
+    public function post(string $route, callable $handler): RouteInterface
     {
         return $this->addRoute('POST', $route, $handler);
     }
@@ -32,7 +32,7 @@ trait RequestMethods
     /**
      * @inheritDoc
      */
-    public function patch(string $route, $handler): RouteInterface
+    public function patch(string $route, callable $handler): RouteInterface
     {
         return $this->addRoute('PATCH', $route, $handler);
     }
@@ -40,7 +40,7 @@ trait RequestMethods
     /**
      * @inheritDoc
      */
-    public function put(string $route, $handler): RouteInterface
+    public function put(string $route, callable $handler): RouteInterface
     {
         return $this->addRoute('PUT', $route, $handler);
     }
@@ -48,7 +48,7 @@ trait RequestMethods
     /**
      * @inheritDoc
      */
-    public function delete(string $route, $handler): RouteInterface
+    public function delete(string $route, callable $handler): RouteInterface
     {
         return $this->addRoute('DELETE', $route, $handler);
     }
@@ -56,7 +56,7 @@ trait RequestMethods
     /**
      * @inheritDoc
      */
-    public function head(string $route, $handler): RouteInterface
+    public function head(string $route, callable $handler): RouteInterface
     {
         return $this->addRoute('HEAD', $route, $handler);
     }

@@ -63,56 +63,56 @@ interface RouteInterface
     /**
      * Add GET to route collection
      * @param string $route
-     * @param mixed $handler
+     * @param callable $handler
      * @return RouteInterface
      */
-    public function get(string $route, $handler): RouteInterface;
+    public function get(string $route, callable $handler): RouteInterface;
 
     /**
      * Add POST to route collection
      * @param string $route
-     * @param mixed $handler
+     * @param callable $handler
      * @return RouteInterface
      */
-    public function post(string $route, $handler): RouteInterface;
+    public function post(string $route, callable $handler): RouteInterface;
 
     /**
      * Add PUT to route collection
      * @param string $route
-     * @param mixed $handler
+     * @param callable $handler
      * @return RouteInterface
      */
-    public function put(string $route, $handler): RouteInterface;
+    public function put(string $route, callable $handler): RouteInterface;
 
     /**
      * Add PATCH to route collection
      * @param string $route
-     * @param mixed $handler
+     * @param callable $handler
      * @return RouteInterface
      */
-    public function patch(string $route, $handler): RouteInterface;
+    public function patch(string $route, callable $handler): RouteInterface;
 
     /**
      * Add DELETE to route collection
      * @param string $route
-     * @param mixed $handler
+     * @param callable $handler
      * @return RouteInterface
      */
-    public function delete(string $route, $handler): RouteInterface;
+    public function delete(string $route, callable $handler): RouteInterface;
 
     /**
      * Add HEAD to route collection
      * @param string $route
-     * @param mixed $handler
+     * @param callable $handler
      * @return RouteInterface
      */
-    public function head(string $route, $handler): RouteInterface;
+    public function head(string $route, callable $handler): RouteInterface;
 
     /**
      * Retrieve registered routes
-     * @return string[]
+     * @return array<mixed>
      */
-    public function getRouteData();
+    public function getRouteData(): array;
 
     /**
      * Register route to nikita popov's router

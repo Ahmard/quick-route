@@ -27,7 +27,7 @@ class DispatchResult
      * If url is found
      * @return bool
      */
-    public function isFound()
+    public function isFound(): bool
     {
         return $this->dispatchResult[0] === FastDispatcher::FOUND;
     }
@@ -36,7 +36,7 @@ class DispatchResult
      * If url is not found
      * @return bool
      */
-    public function isNotFound()
+    public function isNotFound(): bool
     {
         return $this->dispatchResult[0] === FastDispatcher::NOT_FOUND;
     }
@@ -45,16 +45,16 @@ class DispatchResult
      * If url method is not allowed
      * @return bool
      */
-    public function isMethodNotAllowed()
+    public function isMethodNotAllowed(): bool
     {
         return $this->dispatchResult[0] === FastDispatcher::METHOD_NOT_ALLOWED;
     }
 
     /**
      * Get dispatched url parameters
-     * @return array|null
+     * @return array<mixed>|null
      */
-    public function getUrlParameters()
+    public function getUrlParameters(): ?array
     {
         return $this->dispatchResult[2] ?? null;
     }

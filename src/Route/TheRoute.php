@@ -58,8 +58,8 @@ class TheRoute implements RouteInterface
      */
     public function onRegister(): RouteInterface
     {
-        if (substr($this->prefix, 0, 1) != '/') {
-            $this->prefix = '/' . $this->prefix;
+        if (substr($this->prefix, 0, 1) != Getter::getDelimiter()) {
+            $this->prefix = Getter::getDelimiter() . $this->prefix;
         }
 
         return $this;
