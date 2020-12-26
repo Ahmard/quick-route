@@ -19,7 +19,11 @@
   },
   "autoload": {
     "psr-4": {
-      "QuickRoute\\": "src/",
+      "QuickRoute\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
       "QuickRoute\\Tests\\": "tests/"
     }
   }
