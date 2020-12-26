@@ -49,6 +49,12 @@ class Collector
      */
     private bool $willCollect = false;
 
+    /**
+     * Route prefix delimiter
+     * @var string
+     */
+    private string $delimiter = '/';
+
 
     /**
      * Create an instance of collector
@@ -99,6 +105,17 @@ class Collector
     public function cache(string $cacheFile): self
     {
         $this->cacheFile = $cacheFile;
+        return $this;
+    }
+
+    /**
+     * Set custom route prefix delimiter
+     * @param string $delimiter
+     * @return $this
+     */
+    public function prefixDelimiter(string $delimiter): self
+    {
+        $this->delimiter = $delimiter;
         return $this;
     }
 
@@ -155,15 +172,25 @@ class Collector
                 Route::restart();
                 require $collectableFile;
                 //Store collected routes
-                $this->collectedRoutes = array_merge($this->collectedRoutes, Getter::create()->get(
-                    Route::getRoutes(),
-                    $collectableRoute['data']
-                ));
+                $this->collectedRoutes = array_merge(
+                    $this->collectedRoutes,
+                    Getter::create()
+                        ->prefixDelimiter($this->delimiter)
+                        ->get(
+                            Route::getRoutes(),
+                            $collectableRoute['data']
+                        )
+                );
             } else {
-                $this->collectedRoutes = array_merge($this->collectedRoutes, Getter::create()->get(
-                    Route::getRoutes(),
-                    $collectableRoute['data']
-                ));
+                $this->collectedRoutes = array_merge(
+                    $this->collectedRoutes,
+                    Getter::create()
+                        ->prefixDelimiter($this->delimiter)
+                        ->get(
+                            Route::getRoutes(),
+                            $collectableRoute['data']
+                        )
+                );
             }
         }
 

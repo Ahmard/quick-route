@@ -97,7 +97,7 @@ Route::prefix('user')
     ->addField('specie', 'human')
     ->group(function (){
         Route::get('type', 'admin')->addField('permissions', 'all');
-        Route::get('g', 3);
+        Route::get('g', fn() => print('Hello world'));
     });
 
 ```
@@ -137,7 +137,7 @@ $routes = $collector->getCollectedRoutes();
 #### Passing Default Data
 You can alternatively pass data to be prepended to all routes.
 <br/>
-If you have caching turned on, you most clear cached routes manually after setting/updating default route data.
+Cached routes must be cleared manually after setting/updating default route data.
 ```php
 use QuickRoute\Route\Collector;
 
@@ -146,6 +146,31 @@ $collector = Collector::create()->collectFile('api-routes.php', [
     'name' => 'api.',
     'namespace' => 'Api\\'
 ])->register();
+```
+
+#### Changing Delimiter
+For usage outside of web context, a function to change default delimiter which is "**/**" has been provided.
+```php
+use QuickRoute\Route;
+use QuickRoute\Route\Collector;
+use QuickRoute\Route\Dispatcher;
+
+require 'vendor/autoload.php';
+
+Route::prefix('hello')
+    ->group(function () {
+        Route::get('world', fn() => print('Hello World'));
+    });
+
+$collector = Collector::create()
+    ->prefixDelimiter('.')
+    ->collect()
+    ->register();
+
+$dispatchResult = Dispatcher::create($collector)
+    ->dispatch('get', 'hello.world');
+
+var_export($dispatchResult);
 ```
 
 #### Note

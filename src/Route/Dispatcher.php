@@ -39,12 +39,12 @@ class Dispatcher
         $path = rawurldecode($path);
 
         //Remove trailing forward slash
-        if ($lengthPath > 0 && $path[$lengthPath] == '/') {
+        if ($lengthPath > 0 && $path[$lengthPath] == Getter::getDelimiter()) {
             $path = substr($path, 0, $lengthPath);
         }
 
-        if (substr($path, 0, 1) != '/') {
-            $path = '/' . $path;
+        if (substr($path, 0, 1) != Getter::getDelimiter()) {
+            $path = Getter::getDelimiter() . $path;
         }
 
         $urlData = $this->createDispatcher()
@@ -56,7 +56,7 @@ class Dispatcher
     /**
      * @return FastDispatcher
      */
-    private function createDispatcher()
+    private function createDispatcher(): FastDispatcher
     {
         if (!isset($this->dispatcher)) {
             $this->dispatcher = GroupCountBased::class;

@@ -13,7 +13,7 @@ class RouteData
 
     /**
      * Get route data as array
-     * @return array
+     * @return array<mixed>
      */
     public function getData(): array
     {
@@ -95,7 +95,7 @@ class RouteData
 
     /**
      * Get route fields
-     * @return array
+     * @return array<mixed>
      */
     public function getFields(): array
     {

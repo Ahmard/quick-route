@@ -22,10 +22,27 @@ class Getter
      * @var mixed[]
      */
     private array $routeDefaultData = [];
+    private static string $delimiter;
 
     public static function create(): self
     {
         return new self();
+    }
+
+    /**
+     * Set custom route prefix delimiter
+     * @param string $delimiter
+     * @return $this
+     */
+    public function prefixDelimiter(string $delimiter): self
+    {
+        self::$delimiter = $delimiter;
+        return $this;
+    }
+
+    public static function getDelimiter(): string
+    {
+        return self::$delimiter;
     }
 
     /**
@@ -48,7 +65,7 @@ class Getter
     /**
      * Loop through routes
      * @param TheRoute[] $routes
-     * @return array[]
+     * @return array<mixed>
      */
     private function loop(array $routes): array
     {
@@ -81,8 +98,8 @@ class Getter
 
     /**
      * Build route structure
-     * @param array[] $routes
-     * @param string[] $parent
+     * @param array<mixed> $routes
+     * @param array<mixed> $parent
      */
     private function build(array $routes, array $parent = []): void
     {
@@ -93,7 +110,7 @@ class Getter
                 if (isset($parent['prefix'])) {
                     $parentPrefix = $parent['prefix'];
                     if (!empty($routeData['prefix'])) {
-                        $parentPrefix = $parentPrefix . ($routeData['prefix'] == '/' ? '' : $routeData['prefix']);
+                        $parentPrefix = $parentPrefix . ($routeData['prefix'] == self::$delimiter ? '' : $routeData['prefix']);
                     }
                 }
 
@@ -137,12 +154,12 @@ class Getter
                             $ready['middleware'] = $this->routeDefaultData['middleware'] . ($ready['middleware'] ? '|' . $ready['middleware'] : '');
                         }
                     } else {
-                        $ready['prefix'] = $this->removeRootSlash($ready['prefix']);
+                        $ready['prefix'] = $this->removeRootDelimiter($ready['prefix']);
                     }
 
                     //We are now sure that all slashes at the prefix's beginning are cleaned
                     //Now let's put it back
-                    $ready['prefix'] = '/' . $ready['prefix'];
+                    $ready['prefix'] = self::$delimiter . $ready['prefix'];
 
                     //Clean prefix
                     $this->routes[] = $ready;
@@ -164,9 +181,9 @@ class Getter
      */
     private function buildPrefix(string $prefix1, string $prefix2): string
     {
-        $prefix2 = $this->removeTrailingSlash($prefix2);
-        if ($prefix2 && $prefix2 != '/') {
-            return ($prefix1 ? $prefix1 . '/' : '') . $prefix2;
+        $prefix2 = $this->removeTrailingDelimiter($prefix2);
+        if ($prefix2 && $prefix2 != self::$delimiter) {
+            return ($prefix1 ? $prefix1 . self::$delimiter : '') . $prefix2;
         }
 
         return $prefix1;
@@ -177,14 +194,14 @@ class Getter
      * @param string $prefix
      * @return string
      */
-    private function removeTrailingSlash(string $prefix): string
+    private function removeTrailingDelimiter(string $prefix): string
     {
         $prefixLength = strlen($prefix) - 1;
-        if ($prefixLength > 0 && $prefix[$prefixLength] == '/') {
-            $prefix = $this->removeTrailingSlash(substr($prefix, 0, $prefixLength));
+        if ($prefixLength > 0 && $prefix[$prefixLength] == self::$delimiter) {
+            $prefix = $this->removeTrailingDelimiter(substr($prefix, 0, $prefixLength));
         }
 
-        return $this->removeRootSlash($prefix);
+        return $this->removeRootDelimiter($prefix);
     }
 
     /**
@@ -192,10 +209,10 @@ class Getter
      * @param string $prefix
      * @return string
      */
-    private function removeRootSlash(string $prefix): string
+    private function removeRootDelimiter(string $prefix): string
     {
-        if (substr($prefix, 0, 1) == '/') {
-            return $this->removeRootSlash(substr($prefix, 1, strlen($prefix)));
+        if (substr($prefix, 0, 1) == self::$delimiter) {
+            return $this->removeRootDelimiter(substr($prefix, 1, strlen($prefix)));
         }
 
         return $prefix;
