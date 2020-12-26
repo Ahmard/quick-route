@@ -135,10 +135,10 @@ class TheRoute implements RouteInterface
      * Listen to route
      * @param string $method
      * @param string $route
-     * @param callable $handlerClass
+     * @param mixed $handlerClass
      * @return TheRoute $this
      */
-    private function addRoute(string $method, string $route, callable $handlerClass): RouteInterface
+    private function addRoute(string $method, string $route, $handlerClass): RouteInterface
     {
         $this->method = $method;
         $this->prefix = $route;
