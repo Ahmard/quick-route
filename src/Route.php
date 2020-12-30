@@ -34,7 +34,7 @@ class Route
      * @param string[] $args
      * @return TheRoute
      */
-    public static function __callStatic(string $name, array $args)
+    public static function __callStatic(string $name, array $args): TheRoute
     {
         $router = new TheRoute();
         self::$called[] = $router;
