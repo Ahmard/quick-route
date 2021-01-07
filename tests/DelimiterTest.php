@@ -12,16 +12,19 @@ class DelimiterTest extends TestCase
         Route::restart();
     }
 
-    public function testPrefix()
+    public function testPrefix(): void
     {
         Route::prefix('planets')->group(function (){
             Route::get('earth', fn() => time());
         });
 
+        $this->assertEquals('/', Route\Getter::getDelimiter());
+
         $routeData = Route\Getter::create()
             ->prefixDelimiter('.')
             ->get(Route::getRoutes());
 
+        $this->assertEquals('.', Route\Getter::getDelimiter());
         $this->assertEquals('.planets.earth', $routeData[0]['prefix']);
     }
 }

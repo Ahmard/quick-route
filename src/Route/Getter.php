@@ -22,7 +22,7 @@ class Getter
      * @var mixed[]
      */
     private array $routeDefaultData = [];
-    private static string $delimiter;
+    private static string $delimiter = '/';
 
     public static function create(): self
     {
