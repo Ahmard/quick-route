@@ -132,10 +132,6 @@ class Collector
      */
     public function register(): self
     {
-        if ($this->isRegistered) {
-            return $this;
-        }
-
         $this->doCollectRoutes();
         $rootFastCollector = $this->getFastRouteCollector(true);
 
