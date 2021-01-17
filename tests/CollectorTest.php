@@ -49,4 +49,16 @@ class CollectorTest extends TestCase
             ->dispatch('GET', 'user');
         self::assertTrue($dispatchResult3->isMethodNotAllowed());
     }
+
+    public function testIsRegisterMethod(): void
+    {
+        $collector = Route\Collector::create()
+            ->collectFile(__DIR__ . '/routes.php');
+
+        self::assertFalse($collector->isRegistered());
+
+        $collector->register();
+
+        self::assertTrue($collector->isRegistered());
+    }
 }

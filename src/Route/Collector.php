@@ -45,13 +45,20 @@ class Collector
     /**
      * An indicator whether cache will collected
      * This is important as to not re-collect routes by calling different methods that invoke doCollectRoute() method
-     * @var bool
+     * @var bool $willCollect
      */
     private bool $willCollect = false;
 
     /**
+     * Indicates whether this collector has been registered or not
+     * This will be useful to help avoid re-registering single collector
+     * @var bool $isRegistered
+     */
+    private bool $isRegistered = false;
+
+    /**
      * Route prefix delimiter
-     * @var string
+     * @var string $delimiter
      */
     private string $delimiter = '/';
 
@@ -125,6 +132,10 @@ class Collector
      */
     public function register(): self
     {
+        if ($this->isRegistered) {
+            return $this;
+        }
+
         $this->doCollectRoutes();
         $rootFastCollector = $this->getFastRouteCollector(true);
 
@@ -143,6 +154,8 @@ class Collector
         if (empty($this->cachedRoutes) && '' != $this->cacheFile) {
             Cache::create($this->cacheFile, $this->fastRouteData);
         }
+
+        $this->isRegistered = true;
 
         return $this;
     }
@@ -241,5 +254,14 @@ class Collector
     public function getFastRouteData(): array
     {
         return $this->fastRouteData;
+    }
+
+    /**
+     * Checks whether this collector has been registered
+     * @return bool
+     */
+    public function isRegistered(): bool
+    {
+        return $this->isRegistered;
     }
 }

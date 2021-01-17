@@ -26,7 +26,7 @@ class RouteRegisterTest extends TestCase
         return Getter::create()->get(Route::getRoutes());
     }
 
-    public function testPrefix()
+    public function testPrefix(): void
     {
         $theRoute = $this->createTheRoute();
         $theRoute->prefix('hello');
@@ -42,7 +42,7 @@ class RouteRegisterTest extends TestCase
         $this->assertEquals('Name\Space\\', $routeData['namespace']);
     }
 
-    public function testAppend()
+    public function testAppend(): void
     {
         Route::append('earth')->group(function (){
             Route::get('planets', fn() => print time());
@@ -52,7 +52,7 @@ class RouteRegisterTest extends TestCase
         $this->assertEquals('/planets/earth', $routeData['prefix']);
     }
 
-    public function testPrepend()
+    public function testPrepend(): void
     {
         Route::restart();
         Route::prepend('galaxies')->group(function (){
@@ -63,7 +63,7 @@ class RouteRegisterTest extends TestCase
         $this->assertEquals('/galaxies/milkyway', $routeData['prefix']);
     }
 
-    public function testGroup()
+    public function testGroup(): void
     {
         Route::restart();
         Route::prefix('one')->group(function (){
@@ -92,7 +92,7 @@ class RouteRegisterTest extends TestCase
         $this->assertEquals('planets.earth', $routeData[3]['name']);
     }
 
-    public function testRequestMethods()
+    public function testRequestMethods(): void
     {
         $theRoute = $this->createTheRoute();
         //GET method

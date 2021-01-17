@@ -12,9 +12,9 @@ class CacheTest extends TestCase
         Route::restart();
     }
 
-    public function testCaching()
+    public function testCaching(): void
     {
-        $collector = Route\Collector::create()
+        Route\Collector::create()
             ->collectFile(__DIR__ . '/routes.php')
             ->cache(__DIR__ . '/route-cache.php')
             ->register();
