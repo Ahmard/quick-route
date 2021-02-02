@@ -180,4 +180,4 @@ Make sure that you call **Collector::collect()** first, before calling **Collect
 
 - If you turn caching on, you cannot use object or any type of callable in route handler.
 ## Licence
-**QuickRoute** is _MIT_ licenced.
+**QuickRoute** is **MIT** licenced.

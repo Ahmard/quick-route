@@ -14,13 +14,13 @@ use QuickRoute\Route\TheRoute;
  * @method static TheRoute namespace(string $namespace) Route namespace
  * @method static TheRoute middleware(string $middleware) Route middleware
  * @method static TheRoute group(callable $closure) Group routes together
- * @method static TheRoute get(string $route, mixed $handler) Register this route as GET
- * @method static TheRoute post(string $route, mixed $handler) Register this route as POST
- * @method static TheRoute put(string $route, mixed $handler) Register this route as PUT
- * @method static TheRoute patch(string $route, mixed $handler) Register this route as PATCH
- * @method static TheRoute delete(string $route, mixed $handler) Register this route as DELETE
- * @method static TheRoute head(string $route, mixed $handler) Register this route as HEAD
- * @method static TheRoute addField(string $name, mixed $handler) Add field of data route collection
+ * @method static TheRoute get(string $route, callable|mixed $handler) Register this route as GET
+ * @method static TheRoute post(string $route, callable|mixed $handler) Register this route as POST
+ * @method static TheRoute put(string $route, callable|mixed $handler) Register this route as PUT
+ * @method static TheRoute patch(string $route, callable|mixed $handler) Register this route as PATCH
+ * @method static TheRoute delete(string $route, callable|mixed $handler) Register this route as DELETE
+ * @method static TheRoute head(string $route, callable|mixed $handler) Register this route as HEAD
+ * @method static TheRoute addField(string $name, callable|mixed $handler) Add field of data route collection
  */
 class Route
 {
