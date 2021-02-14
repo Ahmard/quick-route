@@ -206,7 +206,5 @@ var_export($dispatchResult);
 - You must be careful when using **Collector::collect()** and **Collector::collectFile()** together, 
 as collectFile method will clear previously collected routes before it starts collecting.<br/>
 Make sure that you call **Collector::collect()** first, before calling **Collector::collectFile()**.
-
-- If you turn caching on, you cannot use object or any type of callable in route handler.
 ## Licence
 **QuickRoute** is **MIT** licenced.
