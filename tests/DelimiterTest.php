@@ -4,6 +4,7 @@ namespace QuickRoute\Tests;
 
 use PHPUnit\Framework\TestCase;
 use QuickRoute\Route;
+use QuickRoute\Router\Getter;
 
 class DelimiterTest extends TestCase
 {
@@ -18,13 +19,13 @@ class DelimiterTest extends TestCase
             Route::get('earth', fn() => time());
         });
 
-        $this->assertEquals('/', Route\Getter::getDelimiter());
+        $this->assertEquals('/', Getter::getDelimiter());
 
-        $routeData = Route\Getter::create()
+        $routeData = Getter::create()
             ->prefixDelimiter('.')
             ->get(Route::getRoutes());
 
-        $this->assertEquals('.', Route\Getter::getDelimiter());
+        $this->assertEquals('.', Getter::getDelimiter());
         $this->assertEquals('.planets.earth', $routeData[0]['prefix']);
     }
 }

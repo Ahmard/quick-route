@@ -1,10 +1,11 @@
 # QuickRoute
 An elegant http router built on top of [FastRoute](https://github.com/nikic/FastRoute) to provide more easy of use.
 
-## Information
-Due to object-sharing between routes introduced in version 1, some errors cannot be fixed.
-<br/>
-Here is version 2, which is object-sharing free.
+## Upgrade Guide
+Changes to take note when upgrading from **v2.x** to **v3.x**
+* Namespace change from **QuickRoute\Route\Whatever** to **QuickRoute\Router\Whatever**
+* Caching now support closure routes
+* Unregistered **Collector** can now be passed to **Dispatcher**
 
 ## Installation
 ```bash
@@ -14,10 +15,11 @@ composer require ahmard/quick-route
 ## Usage
 
 Simple example
+
 ```php
 use QuickRoute\Route;
-use QuickRoute\Route\Collector;
-use QuickRoute\Route\Dispatcher;
+use QuickRoute\Router\Collector;
+use QuickRoute\Router\Dispatcher;
 
 require('vendor/autoload.php');
 
@@ -25,22 +27,21 @@ Route::get('/', function () {
     echo 'Hello world';
 });
 
+//create route collector
+$collector = Collector::create()->collect();
+
 $method = $_SERVER['REQUEST_METHOD'];
 $path = $_SERVER['REQUEST_URI'];
-if (false !== $pos = strpos($path, '?')) {
-    $uri = substr($path, 0, $pos);
-}
-$path = rawurldecode($path);
 
+//create route dispatcher
+$dispatcher = Dispatcher::create($collector)
+    ->dispatch($method, $path);
 
-$collector = Collector::create()->collect()->register();
-
-$dispatcher = Dispatcher::create($collector)->dispatch($method, $path);
-
+//determine dispatch result
 switch (true) {
     case $dispatcher->isFound():
-        $routeData = $dispatcher->getRoute();
-        $routeData['handler']($dispatcher->getUrlParameters());
+        $handler = $dispatcher->getRoute()->getHandler();
+        $handler($dispatcher->getUrlParameters());
         break;
     case $dispatcher->isNotFound():
         echo "Page not found";
@@ -52,6 +53,7 @@ switch (true) {
 ```
 
 #### Controller-like example
+
 ```php
 use QuickRoute\Route;
 
@@ -59,6 +61,7 @@ Route::get('/home', 'MainController@home');
 ```
 
 #### Advance usage
+
 ```php
 use QuickRoute\Route;
 
@@ -72,6 +75,7 @@ Route::prefix('user')->name('user.')
 ```
 
 #### More Advance Usage
+
 ```php
 use QuickRoute\Route;
 
@@ -89,6 +93,7 @@ Route::prefix('user')
 
 #### Route Fields
 Fields help to add more description to route or group of routes
+
 ```php
 use QuickRoute\Route;
 
@@ -103,6 +108,7 @@ Route::prefix('user')
 ```
 
 #### Routes as configuration
+
 ```php
 //routes.php
 use QuickRoute\Route;
@@ -112,7 +118,7 @@ Route::get('/help', 'MainController@help');
 
 
 //server.php
-use QuickRoute\Route\Collector;
+use QuickRoute\Router\Collector;
 
 $collector = Collector::create()
     ->collectFile('routes.php')
@@ -123,23 +129,45 @@ $routes = $collector->getCollectedRoutes();
 
 #### Caching
 Cache routes so that they don't have to be collected every time.
+
 ```php
-use QuickRoute\Route\Collector;
+use QuickRoute\Router\Collector;
 
 $collector = Collector::create()
     ->collectFile('routes.php')
-    ->cache('path/to/save/cache.php')
+    ->cache('path/to/save/cache.php', false)
     ->register();
 
 $routes = $collector->getCollectedRoutes();
 ```
 
+Caching routes with closure
+
+```php
+use QuickRoute\Route;
+use QuickRoute\Router\Collector;
+
+Route::get('/', function (){
+    echo uniqid();
+});
+
+$collector = Collector::create()
+    ->collect()
+    ->cache('path/to/save/cache.php', true)
+    ->register();
+
+$routes = $collector->getCollectedRoutes();
+```
+**Note that you must specify that your routes contains closure**
+
+
 #### Passing Default Data
 You can alternatively pass data to be prepended to all routes.
 <br/>
 Cached routes must be cleared manually after setting/updating default route data.
+
 ```php
-use QuickRoute\Route\Collector;
+use QuickRoute\Router\Collector;
 
 $collector = Collector::create()->collectFile('api-routes.php', [
     'prefix' => 'api',
@@ -150,10 +178,11 @@ $collector = Collector::create()->collectFile('api-routes.php', [
 
 #### Changing Delimiter
 For usage outside of web context, a function to change default delimiter which is "**/**" has been provided.
+
 ```php
 use QuickRoute\Route;
-use QuickRoute\Route\Collector;
-use QuickRoute\Route\Dispatcher;
+use QuickRoute\Router\Collector;
+use QuickRoute\Router\Dispatcher;
 
 require 'vendor/autoload.php';
 

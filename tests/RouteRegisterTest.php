@@ -6,7 +6,7 @@ namespace QuickRoute\Tests;
 
 use PHPUnit\Framework\TestCase;
 use QuickRoute\Route;
-use QuickRoute\Route\Getter;
+use QuickRoute\Router\Getter;
 
 class RouteRegisterTest extends TestCase
 {

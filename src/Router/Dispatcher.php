@@ -1,7 +1,7 @@
 <?php
 
 
-namespace QuickRoute\Route;
+namespace QuickRoute\Router;
 
 use FastRoute\Dispatcher as FastDispatcher;
 use FastRoute\Dispatcher\GroupCountBased;
@@ -62,6 +62,11 @@ class Dispatcher
             $this->dispatcher = GroupCountBased::class;
         }
 
+        //Register collector if it is not registered
+        if (!$this->collector->isRegistered()) {
+            $this->collector->register();
+        }
+
         $dispatcher = $this->dispatcher;
         $routeData = $this->collector->getFastRouteData();
 
@@ -71,9 +76,11 @@ class Dispatcher
     /**
      * Set your own dispatcher
      * @param string $dispatcher A class namespace implementing \FastRoute\Dispatcher
+     * @return Dispatcher
      */
-    public function setDispatcher(string $dispatcher): void
+    public function setDispatcher(string $dispatcher): Dispatcher
     {
         $this->dispatcher = $dispatcher;
+        return $this;
     }
 }

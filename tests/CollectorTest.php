@@ -4,6 +4,8 @@ namespace QuickRoute\Tests;
 
 use PHPUnit\Framework\TestCase;
 use QuickRoute\Route;
+use QuickRoute\Router\Collector;
+use QuickRoute\Router\Dispatcher;
 
 class CollectorTest extends TestCase
 {
@@ -16,10 +18,10 @@ class CollectorTest extends TestCase
     {
         Route::get('hello/world', fn() => print "Hello world");
         Route::get('hello/planet', fn() => print "Hello planet");
-        $collector = Route\Collector::create()
+        $collector = Collector::create()
             ->collect();
 
-        $fileCollector = Route\Collector::create()
+        $fileCollector = Collector::create()
             ->collectFile(__DIR__ . '/routes.php');
 
         $this->assertCount(2, $collector->getCollectedRoutes());
@@ -28,31 +30,31 @@ class CollectorTest extends TestCase
 
     public function testDispatcher(): void
     {
-        $collector = Route\Collector::create()
+        $collector = Collector::create()
             ->collectFile(__DIR__ . '/routes.php');
 
         $collectedRoutes = $collector->getCollectedRoutes();
 
         $collector->register();
 
-        $dispatchResult = Route\Dispatcher::create($collector)
+        $dispatchResult = Dispatcher::create($collector)
             ->dispatch('POST', 'user/save');
         self::assertTrue($dispatchResult->isFound());
         self::assertEquals($collectedRoutes[0], $dispatchResult->getRoute()->getData());
         self::assertEquals('creator', $dispatchResult->getRoute()->getName());
 
-        $dispatchResult2 = Route\Dispatcher::create($collector)
+        $dispatchResult2 = Dispatcher::create($collector)
             ->dispatch('GET', 'user/list');
         self::assertTrue($dispatchResult2->isNotFound());
 
-        $dispatchResult3 = Route\Dispatcher::create($collector)
+        $dispatchResult3 = Dispatcher::create($collector)
             ->dispatch('GET', 'user');
         self::assertTrue($dispatchResult3->isMethodNotAllowed());
     }
 
     public function testIsRegisterMethod(): void
     {
-        $collector = Route\Collector::create()
+        $collector = Collector::create()
             ->collectFile(__DIR__ . '/routes.php');
 
         self::assertFalse($collector->isRegistered());

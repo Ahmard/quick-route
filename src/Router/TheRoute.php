@@ -1,6 +1,6 @@
 <?php
 
-namespace QuickRoute\Route;
+namespace QuickRoute\Router;
 
 use QuickRoute\RouteInterface;
 

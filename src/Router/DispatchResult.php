@@ -1,7 +1,7 @@
 <?php
 
 
-namespace QuickRoute\Route;
+namespace QuickRoute\Router;
 
 
 use FastRoute\Dispatcher as FastDispatcher;

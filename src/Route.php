@@ -2,7 +2,7 @@
 
 namespace QuickRoute;
 
-use QuickRoute\Route\TheRoute;
+use QuickRoute\Router\TheRoute;
 
 /**
  * Command listeners registry

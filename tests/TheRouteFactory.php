@@ -4,7 +4,7 @@
 namespace QuickRoute\Tests;
 
 
-use QuickRoute\Route\TheRoute;
+use QuickRoute\Router\TheRoute;
 use QuickRoute\RouteInterface;
 
 class TheRouteFactory extends TheRoute

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace QuickRoute\Route;
+namespace QuickRoute\Router;
 
 use FastRoute\DataGenerator\GroupCountBased;
 use FastRoute\RouteCollector as FastRouteCollector;
@@ -14,31 +14,37 @@ class Collector
 
     /**
      * List of routes to be collected
-     * @var mixed[]
+     * @var mixed[] $collectableRoutes
      */
     private array $collectableRoutes = [];
 
     /**
      * List of collected routes
-     * @var array[]
+     * @var array[] $collectedRoutes
      */
     private array $collectedRoutes = [];
 
     /**
      * A file to save cache in
-     * @var string
+     * @var string $cacheFile
      */
     private string $cacheFile = '';
 
     /**
+     * Indicates that routes has closures in their handles
+     * @var bool $routesHasClosures
+     */
+    private bool $routesHasClosures = true;
+
+    /**
      * List of found cached routes
-     * @var array[]
+     * @var array[] $cachedRoutes
      */
     private array $cachedRoutes = [];
 
     /**
      * A fast-route compatible route data
-     * @var array[]
+     * @var array[] $fastRouteData
      */
     private array $fastRouteData = [];
 
@@ -106,12 +112,16 @@ class Collector
 
     /**
      * Cache this group
-     * @param string $cacheFile
+     * @param string $cacheFile Location to cache file
+     * @param bool $hasClosures Indicates that routes has closures in their handlers.
+     * This will tell caching lib to not look closures.
      * @return $this
      */
-    public function cache(string $cacheFile): self
+    public function cache(string $cacheFile, bool $hasClosures = true): self
     {
         $this->cacheFile = $cacheFile;
+        $this->routesHasClosures = $hasClosures;
+
         return $this;
     }
 
@@ -167,7 +177,7 @@ class Collector
         }
 
         if ('' != $this->cacheFile) {
-            $cachedVersion = Cache::get($this->cacheFile);
+            $cachedVersion = Cache::get($this->cacheFile, $this->routesHasClosures);
         }
 
         if (!empty($cachedVersion)) {
