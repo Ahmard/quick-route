@@ -5,8 +5,8 @@ namespace QuickRoute;
 use QuickRoute\Router\TheRoute;
 
 /**
- * Command listeners registry
- * @package App\Core\Router
+ * Http routes registry
+ * @package QuickRoute
  * @method static TheRoute prefix(string $prefix) String of prefix
  * @method static TheRoute append(string $prefix) Append prefix to route
  * @method static TheRoute prepend(string $prefix) Prepend prefix to route
@@ -14,12 +14,13 @@ use QuickRoute\Router\TheRoute;
  * @method static TheRoute namespace(string $namespace) Route namespace
  * @method static TheRoute middleware(string $middleware) Route middleware
  * @method static TheRoute group(callable $closure) Group routes together
- * @method static TheRoute get(string $route, callable|mixed $handler) Register this route as GET
- * @method static TheRoute post(string $route, callable|mixed $handler) Register this route as POST
- * @method static TheRoute put(string $route, callable|mixed $handler) Register this route as PUT
- * @method static TheRoute patch(string $route, callable|mixed $handler) Register this route as PATCH
- * @method static TheRoute delete(string $route, callable|mixed $handler) Register this route as DELETE
- * @method static TheRoute head(string $route, callable|mixed $handler) Register this route as HEAD
+ * @method static TheRoute get(string $uri, callable|mixed $handler) Register this route as GET
+ * @method static TheRoute post(string $uri, callable|mixed $handler) Register this route as POST
+ * @method static TheRoute put(string $uri, callable|mixed $handler) Register this route as PUT
+ * @method static TheRoute patch(string $uri, callable|mixed $handler) Register this route as PATCH
+ * @method static TheRoute delete(string $uri, callable|mixed $handler) Register this route as DELETE
+ * @method static TheRoute head(string $uri, callable|mixed $handler) Register route to multiple http verbs
+ * @method static TheRoute match(array|string $methods, string $uri, callable|mixed $handler) Register this route as HEAD
  * @method static TheRoute addField(string $name, callable|mixed $handler) Add field of data route collection
  */
 class Route
@@ -29,6 +30,7 @@ class Route
      */
     protected static array $called = [];
 
+
     /**
      * @param string $name
      * @param string[] $args
@@ -36,16 +38,28 @@ class Route
      */
     public static function __callStatic(string $name, array $args): TheRoute
     {
-        $router = new TheRoute();
-        self::$called[] = $router;
-        return $router->$name(...$args);
+        $route = new TheRoute();
+        //Recording match routes will cause registering an empty route
+        if ('match' != $name) {
+            self::push($route);
+        }
+
+        return $route->$name(...$args);
+    }
+
+    /**
+     * Add route class to list of routes
+     * @param TheRoute $route
+     */
+    public static function push(TheRoute $route): void
+    {
+        self::$called[] = $route;
     }
 
     /**
      * Clear previously collected routes
-     * @return void
      */
-    public static function restart()
+    public static function restart(): void
     {
         self::$called = [];
     }

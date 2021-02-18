@@ -3,6 +3,7 @@
 
 namespace QuickRoute;
 
+use Closure;
 
 interface RouteInterface
 {
@@ -15,10 +16,10 @@ interface RouteInterface
 
     /**
      * Group http requests together
-     * @param callable $closure
+     * @param Closure $closure
      * @return RouteInterface
      */
-    public function group(callable $closure): RouteInterface;
+    public function group(Closure $closure): RouteInterface;
 
     /** Set namespace to group of routes
      * @param string $namespace
@@ -109,13 +110,22 @@ interface RouteInterface
     public function head(string $route, $handler): RouteInterface;
 
     /**
+     * Register route to multiple http verbs
+     * @param array|string $methods
+     * @param string $uri
+     * @param callable|mixed $handler
+     * @return RouteInterface
+     */
+    public function match($methods, string $uri, $handler): RouteInterface;
+
+    /**
      * Retrieve registered routes
      * @return array<mixed>
      */
     public function getRouteData(): array;
 
     /**
-     * Register route to nikita popov's router
+     * This method will be invoked just before registering routes
      * @return RouteInterface
      */
     public function onRegister(): RouteInterface;
