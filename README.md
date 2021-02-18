@@ -107,6 +107,28 @@ Route::prefix('user')
 
 ```
 
+#### Route Matching
+```php
+use QuickRoute\Route;
+use QuickRoute\Router\Collector;
+use QuickRoute\Router\Dispatcher;
+
+require 'vendor/autoload.php';
+
+$handler = fn() => print time();
+Route::match(['get', 'post'], '/user', $handler)
+    ->middleware('auth')
+    ->namespace('App')
+    ->name('home');
+
+$collector = Collector::create()->collect();
+
+$dispatchResult = Dispatcher::create($collector)
+    ->dispatch('get', '/user/hello');
+
+var_export($dispatchResult->getRoute());
+```
+
 #### Routes as configuration
 
 ```php
@@ -169,11 +191,13 @@ Cached routes must be cleared manually after setting/updating default route data
 ```php
 use QuickRoute\Router\Collector;
 
-$collector = Collector::create()->collectFile('api-routes.php', [
+$collector = Collector::create();
+$collector->collectFile('api-routes.php', [
     'prefix' => 'api',
     'name' => 'api.',
     'namespace' => 'Api\\'
-])->register();
+]);
+$collector->register();
 ```
 
 #### Changing Delimiter

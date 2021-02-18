@@ -13,20 +13,24 @@ use QuickRoute\Route;
  */
 class Getter
 {
+    private static string $delimiter = '/';
     /**
      * @var array[]
      */
     private array $routes;
-
     /**
      * @var mixed[]
      */
     private array $routeDefaultData = [];
-    private static string $delimiter = '/';
 
     public static function create(): self
     {
         return new self();
+    }
+
+    public static function getDelimiter(): string
+    {
+        return self::$delimiter;
     }
 
     /**
@@ -38,11 +42,6 @@ class Getter
     {
         self::$delimiter = $delimiter;
         return $this;
-    }
-
-    public static function getDelimiter(): string
-    {
-        return self::$delimiter;
     }
 
     /**
@@ -72,7 +71,7 @@ class Getter
         $results = [];
 
         for ($i = 0; $i < count($routes); $i++) {
-            $route = $routes[$i]->getRouteData();
+            $route = $routes[$i]->getData();
             $results[$i]['route'] = $route;
             if (!empty($route['group'])) {
                 $results[$i]['children'] = $this->loop($this->getGroup($route['group']));
@@ -108,36 +107,24 @@ class Getter
             if (isset($route['route'])) {
 
                 if (isset($parent['prefix'])) {
-                    $parentPrefix = $parent['prefix'];
                     if (!empty($routeData['prefix'])) {
-                        $parentPrefix = $parentPrefix . ($routeData['prefix'] == self::$delimiter ? '' : $routeData['prefix']);
+                        if ($routeData['prefix'] != self::$delimiter) {
+                            $parent['prefix'] .= $routeData['prefix'];
+                        }
                     }
                 }
 
                 if (isset($parent['middleware'])) {
-                    $parentMiddleware = $parent['middleware'];
                     if ($routeData['middleware']) {
-                        $parentMiddleware = ($parentMiddleware ? $parentMiddleware . '|' : '') . $routeData['middleware'];
+                        if (isset($parent['middleware'])) {
+                            $parent['middleware'] .= '|';
+                        } else {
+                            $parent['middleware'] = $routeData['middleware'];
+                        }
                     }
                 }
 
-                $data = [
-                    'prefix' => ($parentPrefix ?? $routeData['prefix']),
-                    'append' => $this->buildPrefix(
-                        $this->getNullableString($routeData, 'append'),
-                        $this->getNullableString($parent, 'append')
-                    ),
-                    'prepend' => $this->buildPrefix(
-                        $this->getNullableString($parent, 'prepend'),
-                        $this->getNullableString($routeData, 'prepend')
-                    ),
-                    'namespace' => $this->getNullableString($parent, 'namespace') . $routeData['namespace'],
-                    'name' => $this->getNullableString($parent, 'name') . $routeData['name'],
-                    'handler' => $routeData['handler'],
-                    'method' => $routeData['method'],
-                    'middleware' => ($parentMiddleware ?? $routeData['middleware']),
-                    'fields' => array_merge_recursive($parent['fields'] ?? [], $routeData['fields']),
-                ];
+                $data = $this->constructRouteData($routeData, $parent);
 
                 if (!empty($routeData['method'])) {
                     $ready = $data;
@@ -171,6 +158,35 @@ class Getter
 
             }
         }
+    }
+
+    private function constructRouteData(array $routeData, array $parentData): array
+    {
+        //Handle RouteInterface::match() routes
+        if (isset($routeData['parentRoute'])) {
+            $tempParentData = $routeData['parentRoute']->getData();
+            $tempParentData['prefix'] = $routeData['prefix'];
+            unset($routeData['parentRoute']);
+            $routeData = $this->constructRouteData($routeData, $tempParentData);
+        }
+
+        return [
+            'prefix' => $parentData['prefix'] ?? $routeData['prefix'],
+            'append' => $this->buildPrefix(
+                $this->getNullableString($routeData, 'append'),
+                $this->getNullableString($parentData, 'append')
+            ),
+            'prepend' => $this->buildPrefix(
+                $this->getNullableString($parentData, 'prepend'),
+                $this->getNullableString($routeData, 'prepend')
+            ),
+            'namespace' => $this->getNullableString($parentData, 'namespace') . $routeData['namespace'],
+            'name' => $this->getNullableString($parentData, 'name') . $routeData['name'],
+            'handler' => $routeData['handler'],
+            'method' => $routeData['method'],
+            'middleware' => ($parentData['middleware'] ?? $routeData['middleware']),
+            'fields' => array_merge_recursive($parentData['fields'] ?? [], $routeData['fields']),
+        ];
     }
 
     /**

@@ -2,22 +2,15 @@
 
 namespace QuickRoute\Router;
 
-class RouteData
+use JsonSerializable;
+
+class RouteData implements JsonSerializable
 {
     protected array $routeData;
 
     public function __construct(array $routeData)
     {
         $this->routeData = $routeData;
-    }
-
-    /**
-     * Get route data as array
-     * @return array<mixed>
-     */
-    public function getData(): array
-    {
-        return $this->routeData;
     }
 
     /**
@@ -100,5 +93,22 @@ class RouteData
     public function getFields(): array
     {
         return $this->routeData['fields'] ?? [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->getData();
+    }
+
+    /**
+     * Get route data as array
+     * @return array<mixed>
+     */
+    public function getData(): array
+    {
+        return $this->routeData;
     }
 }
