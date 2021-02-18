@@ -106,14 +106,6 @@ class Getter
             $routeData = $route['route'];
             if (isset($route['route'])) {
 
-                if (isset($parent['prefix'])) {
-                    if (!empty($routeData['prefix'])) {
-                        if ($routeData['prefix'] != self::$delimiter) {
-                            $parent['prefix'] .= $routeData['prefix'];
-                        }
-                    }
-                }
-
                 if (isset($parent['middleware'])) {
                     if ($routeData['middleware']) {
                         if (isset($parent['middleware'])) {
@@ -160,18 +152,25 @@ class Getter
         }
     }
 
-    private function constructRouteData(array $routeData, array $parentData): array
+    private function constructRouteData(array $routeData, array $parentData, bool $hasParentRoute = false): array
     {
         //Handle RouteInterface::match() routes
         if (isset($routeData['parentRoute'])) {
             $tempParentData = $routeData['parentRoute']->getData();
             $tempParentData['prefix'] = $routeData['prefix'];
             unset($routeData['parentRoute']);
-            $routeData = $this->constructRouteData($routeData, $tempParentData);
+            $routeData = $this->constructRouteData($routeData, $tempParentData, true);
+        }
+
+        if (isset($parentData['prefix']) && !$hasParentRoute) {
+            $parentPrefix = $parentData['prefix'];
+            if (!empty($routeData['prefix'])) {
+                $parentPrefix = $parentPrefix . ($routeData['prefix'] == self::$delimiter ? '' : $routeData['prefix']);
+            }
         }
 
         return [
-            'prefix' => $parentData['prefix'] ?? $routeData['prefix'],
+            'prefix' => $parentPrefix ?? $routeData['prefix'],
             'append' => $this->buildPrefix(
                 $this->getNullableString($routeData, 'append'),
                 $this->getNullableString($parentData, 'append')
