@@ -12,22 +12,6 @@ use QuickRoute\Router\Getter;
 
 class RouteRegisterTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        Route::restart();
-    }
-
-    protected function createTheRoute(string $delimiter = '/'): TheRouteFactory
-    {
-        Getter::create()->prefixDelimiter($delimiter);
-        return (new TheRouteFactory());
-    }
-
-    protected function getRouteData(): array
-    {
-        return Getter::create()->get(Route::getRoutes());
-    }
-
     public function testPrefix(): void
     {
         $theRoute = $this->createTheRoute();
@@ -44,9 +28,15 @@ class RouteRegisterTest extends TestCase
         $this->assertEquals('Name\Space\\', $routeData['namespace']);
     }
 
+    protected function createTheRoute(string $delimiter = '/'): TheRouteFactory
+    {
+        Getter::create()->prefixDelimiter($delimiter);
+        return (new TheRouteFactory());
+    }
+
     public function testAppend(): void
     {
-        Route::append('earth')->group(function (){
+        Route::append('earth')->group(function () {
             Route::get('planets', fn() => print time());
         });
 
@@ -57,7 +47,7 @@ class RouteRegisterTest extends TestCase
     public function testPrepend(): void
     {
         Route::restart();
-        Route::prepend('galaxies')->group(function (){
+        Route::prepend('galaxies')->group(function () {
             Route::get('milkyway', fn() => print time());
         });
 
@@ -68,30 +58,41 @@ class RouteRegisterTest extends TestCase
     public function testGroup(): void
     {
         Route::restart();
-        Route::prefix('one')->group(function (){
+        Route::prefix('one')->group(function () {
             Route::get('route', fn() => time());
         });
 
-        Route::prefix('start')->append('end')
-            ->group(function (){
+        Route::prefix('start')
+            ->append('end')
+            ->group(function () {
                 Route::get('middle', fn() => time());
+                Route::prefix('inner')->group(function () {
+                    Route::get('route', fn() => printer());
+                });
             });
 
-        Route::prefix('middle')->prepend('start')
-            ->group(function (){
+        Route::prefix('middle')
+            ->prepend('start')
+            ->group(function () {
                 Route::get('end', fn() => time());
             });
 
         Route::name('planets.')
-            ->group(function (){
+            ->group(function () {
                 Route::get('earth', fn() => time())->name('earth');
             });
 
         $routeData = $this->getRouteData();
         $this->assertEquals('/one/route', $routeData[0]['prefix']);
         $this->assertEquals('/start/middle/end', $routeData[1]['prefix']);
-        $this->assertEquals('/start/middle/end', $routeData[2]['prefix']);
-        $this->assertEquals('planets.earth', $routeData[3]['name']);
+        $this->assertEquals('/start/inner/route/end', $routeData[2]['prefix']);
+        $this->assertEquals('/start/middle/end', $routeData[3]['prefix']);
+        $this->assertEquals('planets.earth', $routeData[4]['name']);
+    }
+
+    protected function getRouteData(): array
+    {
+        return Getter::create()->get(Route::getRoutes());
     }
 
     public function testRequestMethods(): void
@@ -138,7 +139,10 @@ class RouteRegisterTest extends TestCase
     {
         $fn = fn() => print time();
         Route::restart();
-        Route::match(['GET', 'POST'], 'login', $fn);
+        Route::match(['GET', 'POST'], 'login', $fn)
+            ->name('login')
+            ->namespace('Auth');
+
         Route::match(['DELETE', 'GET'], 'user', $fn)
             ->middleware('auth')
             ->addField('test', 'field');
@@ -152,6 +156,16 @@ class RouteRegisterTest extends TestCase
             ->dispatch('delete', '/user');
 
         self::assertSame('', $dispatchResult1->getRoute()->getMiddleware());
+        self::assertSame('login', $dispatchResult1->getRoute()->getName());
+        self::assertSame('Auth\\', $dispatchResult1->getRoute()->getNamespace());
         self::assertSame('auth', $dispatchResult2->getRoute()->getMiddleware());
+        self::assertSame([
+            'test' => 'field'
+        ], $dispatchResult2->getRoute()->getFields());
+    }
+
+    protected function setUp(): void
+    {
+        Route::restart();
     }
 }

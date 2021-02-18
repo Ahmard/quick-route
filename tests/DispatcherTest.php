@@ -14,13 +14,12 @@ class DispatcherTest extends TestCase
 {
     public function testDispatching(): void
     {
-        function testy(): void
-        {
+        $testy = function (): void {
             print time();
-        }
+        };
 
         Route::restart();
-        Route::get('/', 'testy');
+        Route::get('/', $testy);
 
         $collector = Collector::create()->collect();
         $routeData = $collector->getCollectedRoutes()[0];
@@ -30,7 +29,7 @@ class DispatcherTest extends TestCase
         self::assertSame($routeData, $result->getRoute()->getData());
     }
 
-    public function testUnregisteredCollector()
+    public function testUnregisteredCollector(): void
     {
         Route::restart();
         Route::get('/', 'hello');
@@ -41,7 +40,7 @@ class DispatcherTest extends TestCase
         self::assertSame($routeData, $result->getRoute()->getData());
     }
 
-    public function testUsedDispatcher()
+    public function testUsedDispatcher(): void
     {
         Route::restart();
         Route::get('/', 'hello');

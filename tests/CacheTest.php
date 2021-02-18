@@ -10,11 +10,6 @@ use QuickRoute\Router\Dispatcher;
 
 class CacheTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        Route::restart();
-    }
-
     public function testCaching(): void
     {
         Collector::create()
@@ -31,7 +26,7 @@ class CacheTest extends TestCase
     public function testClosureCaching(): void
     {
         $message = 'hello there, quick router made it.';
-        Route::get('/', function () use ($message){
+        Route::get('/', function () use ($message) {
             echo $message;
         });
 
@@ -44,5 +39,10 @@ class CacheTest extends TestCase
         ob_end_clean();
 
         self::assertSame($message, $echoed);
+    }
+
+    protected function setUp(): void
+    {
+        Route::restart();
     }
 }

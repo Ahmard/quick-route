@@ -9,11 +9,6 @@ use QuickRoute\Router\Dispatcher;
 
 class CollectorTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        Route::restart();
-    }
-
     public function testCollection(): void
     {
         Route::get('hello/world', fn() => print "Hello world");
@@ -62,5 +57,10 @@ class CollectorTest extends TestCase
         $collector->register();
 
         self::assertTrue($collector->isRegistered());
+    }
+
+    protected function setUp(): void
+    {
+        Route::restart();
     }
 }
