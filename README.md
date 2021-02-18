@@ -4,7 +4,7 @@ An elegant http router built on top of [FastRoute](https://github.com/nikic/Fast
 ## Upgrade Guide
 Changes to take note when upgrading from **v2.x** to **v3.x**
 * Namespace change from **QuickRoute\Route\Whatever** to **QuickRoute\Router\Whatever**
-* Route::match() added to support multiple routes registering at once
+* **Route::match()** added to support multiple routes registering at once
 * Caching now support closure routes
 * Unregistered **Collector** can now be passed to **Dispatcher**
 
