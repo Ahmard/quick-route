@@ -108,7 +108,7 @@ Route::prefix('user')
 
 ```
 
-#### Route Matching
+#### Route::match()
 ```php
 use QuickRoute\Route;
 use QuickRoute\Router\Collector;
@@ -128,6 +128,26 @@ $dispatchResult = Dispatcher::create($collector)
     ->dispatch('get', '/user/hello');
 
 var_export($dispatchResult->getRoute());
+```
+
+#### Route::any()
+
+```php
+use QuickRoute\Route;
+use QuickRoute\Router\Collector;
+use QuickRoute\Router\Dispatcher;
+
+$handler = fn() => print time();
+
+Route::any(['/login', '/admin/login'], 'get', $handler);
+
+$collector = Collector::create()->collect();
+
+$dispatchResult1 = Dispatcher::create($collector)
+    ->dispatch('get', '/login');
+    
+$dispatchResult2 = Dispatcher::create($collector)
+    ->dispatch('get', '/admin/login');
 ```
 
 #### Routes as configuration

@@ -119,6 +119,16 @@ interface RouteInterface
     public function match($methods, string $uri, $handler): RouteInterface;
 
     /**
+     * Register multiple paths to single handler
+     *
+     * @param string|array $paths
+     * @param string $method
+     * @param callable|mixed $handler
+     * @return RouteInterface
+     */
+    public function any($paths, string $method, $handler): RouteInterface;
+
+    /**
      * Retrieve registered routes
      * @return array<mixed>
      */

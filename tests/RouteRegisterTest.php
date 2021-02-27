@@ -164,6 +164,44 @@ class RouteRegisterTest extends TestCase
         ], $dispatchResult2->getRoute()->getFields());
     }
 
+    public function testAny(): void
+    {
+        $handler = 'strtoupper';
+        Route::any([
+            '/',
+            '/login',
+            '/admin/login'
+        ], 'get', $handler);
+
+        Route::create()
+            ->prepend('server')
+            ->any(
+                ['home', 'panel'],
+                'post',
+                $handler
+            );
+
+
+        $collector = Collector::create()->collect();
+        $dispatchResult1 = Dispatcher::create($collector)
+            ->dispatch('get', '/');
+        $dispatchResult2 = Dispatcher::create($collector)
+            ->dispatch('get', '/login');
+        $dispatchResult3 = Dispatcher::create($collector)
+            ->dispatch('get', '/admin/login');
+        $dispatchResult4 = Dispatcher::create($collector)
+            ->dispatch('post', '/server/home');
+        $dispatchResult5 = Dispatcher::create($collector)
+            ->dispatch('post', '/server/panel');
+
+        self::assertSame('/', $dispatchResult1->getRoute()->getPrefix());
+        self::assertSame('/login', $dispatchResult2->getRoute()->getPrefix());
+        self::assertSame('/admin/login', $dispatchResult3->getRoute()->getPrefix());
+        self::assertSame('/admin/login', $dispatchResult3->getRoute()->getPrefix());
+        self::assertSame('/server/home', $dispatchResult4->getRoute()->getPrefix());
+        self::assertSame('/server/panel', $dispatchResult5->getRoute()->getPrefix());
+    }
+
     protected function setUp(): void
     {
         Route::restart();
