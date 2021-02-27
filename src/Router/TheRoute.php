@@ -118,6 +118,25 @@ class TheRoute implements RouteInterface, JsonSerializable
     /**
      * @inheritDoc
      */
+    public function any($paths, string $method, $handler): RouteInterface
+    {
+        if (is_array($paths)) {
+            foreach ($paths as $path) {
+                $method = strtolower($method);
+                $route = new TheRoute($this);
+                Route::push($route);
+                $route->$method($path, $handler);
+            }
+
+            return $this;
+        }
+
+        return $this->addRoute($method, $paths, $handler);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function prefix(string $prefix): RouteInterface
     {
         $this->prefix = $prefix;

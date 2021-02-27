@@ -21,6 +21,7 @@ use QuickRoute\Router\TheRoute;
  * @method static TheRoute delete(string $uri, callable|mixed $handler) Register this route as DELETE
  * @method static TheRoute head(string $uri, callable|mixed $handler) Register route to multiple http verbs
  * @method static TheRoute match(array|string $methods, string $uri, callable|mixed $handler) Register this route as HEAD
+ * @method static TheRoute any(array|string $paths, string $methods, callable|mixed $handler) Register multiple paths to single handler
  * @method static TheRoute addField(string $name, callable|mixed $handler) Add field of data route collection
  */
 class Route
@@ -45,6 +46,17 @@ class Route
         }
 
         return $route->$name(...$args);
+    }
+
+    /**
+     * Create fresh router
+     * @return TheRoute
+     */
+    public static function create(): TheRoute
+    {
+        $route = new TheRoute();
+        self::push($route);
+        return $route;
     }
 
     /**
