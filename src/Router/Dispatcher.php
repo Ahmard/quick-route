@@ -39,7 +39,7 @@ class Dispatcher
         $path = rawurldecode($path);
 
         //Remove trailing forward slash
-        if ($lengthPath > 0 && $path[$lengthPath] == Getter::getDelimiter()) {
+        if (($lengthPath > 0) && substr($path, 0, $lengthPath) == Getter::getDelimiter()) {
             $path = substr($path, 0, $lengthPath);
         }
 
