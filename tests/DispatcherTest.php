@@ -54,4 +54,17 @@ class DispatcherTest extends TestCase
 
         self::assertSame($routeData, $result->getRoute()->getData());
     }
+
+    public function testTrailingSlash(): void
+    {
+        Route::restart();
+        Route::get('/user/admin/', 'hello');
+
+        $collector = Collector::create()->collect()->register();
+
+        $result = Dispatcher::create($collector)
+            ->dispatch('get', '/user/admin');
+
+        self::assertTrue($result->isFound());
+    }
 }
