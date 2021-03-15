@@ -24,7 +24,7 @@ class RouteRegisterTest extends TestCase
         $routeData = $theRoute->getData();
         $this->assertEquals('hello', $routeData['prefix']);
         $this->assertEquals('name', $routeData['name']);
-        $this->assertEquals('middleware', $routeData['middleware']);
+        $this->assertEquals(['middleware'], $routeData['middleware']);
         $this->assertEquals('Name\Space\\', $routeData['namespace']);
     }
 
@@ -155,10 +155,10 @@ class RouteRegisterTest extends TestCase
         $dispatchResult2 = Dispatcher::create($collector)
             ->dispatch('delete', '/user');
 
-        self::assertSame('', $dispatchResult1->getRoute()->getMiddleware());
+        self::assertSame([], $dispatchResult1->getRoute()->getMiddleware());
         self::assertSame('login', $dispatchResult1->getRoute()->getName());
         self::assertSame('Auth\\', $dispatchResult1->getRoute()->getNamespace());
-        self::assertSame('auth', $dispatchResult2->getRoute()->getMiddleware());
+        self::assertSame(['auth'], $dispatchResult2->getRoute()->getMiddleware());
         self::assertSame([
             'test' => 'field'
         ], $dispatchResult2->getRoute()->getFields());

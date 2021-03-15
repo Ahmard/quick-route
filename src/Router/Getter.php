@@ -107,12 +107,8 @@ class Getter
             if (isset($route['route'])) {
 
                 if (isset($parent['middleware'])) {
-                    if ($routeData['middleware']) {
-                        if (isset($parent['middleware'])) {
-                            $parent['middleware'] .= '|';
-                        } else {
-                            $parent['middleware'] = $routeData['middleware'];
-                        }
+                    if (!isset($parent['middleware'])) {
+                        $routeData['middleware'][] = $parent['middleware'];
                     }
                 }
 
@@ -130,7 +126,8 @@ class Getter
                         $ready['namespace'] = ($this->routeDefaultData['namespace'] ?? '') . $ready['namespace'];
                         $ready['name'] = ($this->routeDefaultData['name'] ?? '') . $ready['name'];
                         if (isset($this->routeDefaultData['middleware'])) {
-                            $ready['middleware'] = $this->routeDefaultData['middleware'] . ($ready['middleware'] ? '|' . $ready['middleware'] : '');
+                            $ready['middleware'][] = $this->routeDefaultData['middleware'];
+                            //$ready['middleware'] = $this->routeDefaultData['middleware'] . ($ready['middleware'] ? '|' . $ready['middleware'] : '');
                         }
                     } else {
                         $ready['prefix'] = $this->removeRootDelimiter($ready['prefix']);
@@ -183,8 +180,8 @@ class Getter
             'name' => $this->getNullableString($parentData, 'name') . $routeData['name'],
             'handler' => $routeData['handler'],
             'method' => $routeData['method'],
-            'middleware' => ($parentData['middleware'] ?? $routeData['middleware']),
-            'fields' => array_merge_recursive($parentData['fields'] ?? [], $routeData['fields']),
+            'middleware' => array_merge_recursive($parentData['middleware'] ?? [], $routeData['middleware']),
+            'fields' => array_merge($parentData['fields'] ?? [], $routeData['fields']),
         ];
     }
 
