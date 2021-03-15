@@ -11,7 +11,7 @@ class TheRoute implements RouteInterface, JsonSerializable
 {
     protected string $prefix = '';
     protected string $namespace = '';
-    protected string $middleware = '';
+    protected array $middlewares = [];
     protected string $name = '';
     protected string $append = '';
     protected string $prepend = '';
@@ -196,7 +196,7 @@ class TheRoute implements RouteInterface, JsonSerializable
      */
     public function middleware(string $middleware): RouteInterface
     {
-        $this->middleware = $middleware;
+        $this->middlewares[] = $middleware;
         return $this;
     }
 
@@ -225,7 +225,7 @@ class TheRoute implements RouteInterface, JsonSerializable
             'prefix' => $this->prefix,
             'namespace' => $this->namespace,
             'handler' => $this->handler,
-            'middleware' => $this->middleware,
+            'middleware' => $this->middlewares,
             'method' => $this->method,
             'name' => $this->name,
             'prepend' => $this->prepend,

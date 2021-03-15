@@ -70,11 +70,11 @@ class RouteData implements JsonSerializable
 
     /**
      * Get route middleware
-     * @return string
+     * @return array
      */
-    public function getMiddleware(): string
+    public function getMiddleware(): array
     {
-        return $this->routeData['middleware'] ?? '';
+        return $this->routeData['middleware'];
     }
 
     /**

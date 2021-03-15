@@ -24,7 +24,7 @@ class RouteRegisterTest extends TestCase
         $routeData = $theRoute->getData();
         $this->assertEquals('hello', $routeData['prefix']);
         $this->assertEquals('name', $routeData['name']);
-        $this->assertEquals('middleware', $routeData['middleware']);
+        $this->assertEquals(['middleware'], $routeData['middleware']);
         $this->assertEquals('Name\Space\\', $routeData['namespace']);
     }
 
@@ -155,10 +155,10 @@ class RouteRegisterTest extends TestCase
         $dispatchResult2 = Dispatcher::create($collector)
             ->dispatch('delete', '/user');
 
-        self::assertSame('', $dispatchResult1->getRoute()->getMiddleware());
+        self::assertSame([], $dispatchResult1->getRoute()->getMiddleware());
         self::assertSame('login', $dispatchResult1->getRoute()->getName());
         self::assertSame('Auth\\', $dispatchResult1->getRoute()->getNamespace());
-        self::assertSame('auth', $dispatchResult2->getRoute()->getMiddleware());
+        self::assertSame(['auth'], $dispatchResult2->getRoute()->getMiddleware());
         self::assertSame([
             'test' => 'field'
         ], $dispatchResult2->getRoute()->getFields());
@@ -200,6 +200,25 @@ class RouteRegisterTest extends TestCase
         self::assertSame('/admin/login', $dispatchResult3->getRoute()->getPrefix());
         self::assertSame('/server/home', $dispatchResult4->getRoute()->getPrefix());
         self::assertSame('/server/panel', $dispatchResult5->getRoute()->getPrefix());
+    }
+
+    public function testMiddleware(): void
+    {
+        Route::restart();
+        Route::get('/', fn() => print time())->middleware('only');
+        Route::prefix('/admin')
+            ->middleware('admin')
+            ->group(function (){
+                Route::prefix('user')->group(function (){
+                    Route::get('/', fn() => print time())->middleware('user');
+                });
+            });
+
+        $collector = Collector::create()->collect();
+        $result1 = Dispatcher::create($collector)->dispatch('get', '/');
+        $result2 = Dispatcher::create($collector)->dispatch('get', '/admin/user');
+        self::assertSame(['only'], $result1->getRoute()->getMiddleware());
+        self::assertSame(['admin', 'user'], $result2->getRoute()->getMiddleware());
     }
 
     protected function setUp(): void
