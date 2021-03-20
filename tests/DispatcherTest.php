@@ -67,4 +67,17 @@ class DispatcherTest extends TestCase
 
         self::assertTrue($result->isFound());
     }
+
+    public function testDoubleForwardSlash()
+    {
+        Route::restart();
+        Route::get('/user/admin/', 'hello');
+
+        $collector = Collector::create()->collect()->register();
+
+        $result = Dispatcher::create($collector)
+            ->dispatch('get', '/user//admin');
+
+        self::assertTrue($result->isFound());
+    }
 }

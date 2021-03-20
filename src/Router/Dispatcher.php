@@ -36,6 +36,7 @@ class Dispatcher
         if (false !== $pos = strpos($path, '?')) {
             $path = substr($path, 0, $pos);
         }
+        $path = str_replace('//', '/', $path);
         $path = rawurldecode($path);
 
         //Remove trailing forward slash
