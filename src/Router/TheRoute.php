@@ -137,6 +137,56 @@ class TheRoute implements RouteInterface, JsonSerializable
     /**
      * @inheritDoc
      */
+    public function resource(string $uri, string $controller, bool $integerId = true): RouteInterface
+    {
+        $id = $integerId ? '{id:[0-9]+}' : '{id}';
+        
+        //  GET /whatever
+        $route = new TheRoute($this);
+        $route->get($uri, [$controller, 'index'])->name("{$uri}.index");
+        Route::push($route);
+
+        //  GET /whatever/create
+        $route = new TheRoute($this);
+        $route->get("{$uri}/create", [$controller, 'create'])->name("{$uri}.create");
+        Route::push($route);
+
+        //  POST /whatever/create
+        $route = new TheRoute($this);
+        $route->post("{$uri}", [$controller, 'store'])->name("{$uri}.store");
+        Route::push($route);
+
+        //  GET /whatever/{$id}
+        $route = new TheRoute($this);
+        $route->get("{$uri}/{$id}", [$controller, 'show'])->name("{$uri}.show");
+        Route::push($route);
+
+        //  GET /whatever/{$id}/edit
+        $route = new TheRoute($this);
+        $route->get("{$uri}/{$id}/edit", [$controller, 'edit'])->name("{$uri}.edit");
+        Route::push($route);
+
+        //  PUT /whatever/{$id}
+        $route = new TheRoute($this);
+        $route->put("{$uri}/{$id}", [$controller, 'update'])->name("{$uri}.update");
+        Route::push($route);
+
+        //  PATCH /whatever/{$id}
+        $route = new TheRoute($this);
+        $route->patch("{$uri}/{$id}", [$controller, 'update'])->name("{$uri}.update");
+        Route::push($route);
+
+        //  DELETE /whatever/{$id}
+        $route = new TheRoute($this);
+        $route->delete("{$uri}/{$id}", [$controller, 'destroy'])->name("{$uri}.destroy");
+        Route::push($route);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function prefix(string $prefix): RouteInterface
     {
         $this->prefix = $prefix;
