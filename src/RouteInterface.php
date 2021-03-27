@@ -129,6 +129,16 @@ interface RouteInterface
     public function any($paths, string $method, $handler): RouteInterface;
 
     /**
+     * This single route declaration creates multiple routes to handle a variety of actions on the resource.
+     *
+     * @param string $uri
+     * @param string $controller
+     * @param bool $integerId Specifies that id associated with this route must be integer
+     * @return RouteInterface
+     */
+    public function resource(string $uri, string $controller, bool $integerId = true): RouteInterface;
+
+    /**
      * Retrieve registered routes
      * @return array<mixed>
      */

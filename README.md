@@ -150,6 +150,16 @@ $dispatchResult2 = Dispatcher::create($collector)
     ->dispatch('get', '/admin/login');
 ```
 
+#### Route::resource()
+
+```php
+use QuickRoute\Route;
+
+Route::resource('photos', 'App\Http\Controller\PhotoController');
+```
+Code above will produce below routes 
+![alt text](resource-http-verbs.png)
+
 #### Routes as configuration
 
 ```php
@@ -251,5 +261,9 @@ var_export($dispatchResult);
 - You must be careful when using **Collector::collect()** and **Collector::collectFile()** together, 
 as collectFile method will clear previously collected routes before it starts collecting.<br/>
 Make sure that you call **Collector::collect()** first, before calling **Collector::collectFile()**.
+
+
 ## Licence
+_Route http verbs image is owned by [Riptutorial](https://riptutorial.com)_.
+
 **QuickRoute** is **MIT** licenced.

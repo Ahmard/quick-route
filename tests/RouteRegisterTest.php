@@ -208,8 +208,8 @@ class RouteRegisterTest extends TestCase
         Route::get('/', fn() => print time())->middleware('only');
         Route::prefix('/admin')
             ->middleware('admin')
-            ->group(function (){
-                Route::prefix('user')->group(function (){
+            ->group(function () {
+                Route::prefix('user')->group(function () {
                     Route::get('/', fn() => print time())->middleware('user');
                 });
             });
@@ -219,6 +219,44 @@ class RouteRegisterTest extends TestCase
         $result2 = Dispatcher::create($collector)->dispatch('get', '/admin/user');
         self::assertSame(['only'], $result1->getRoute()->getMiddleware());
         self::assertSame(['admin', 'user'], $result2->getRoute()->getMiddleware());
+    }
+
+    public function testResource(): void
+    {
+        Route::restart();
+        Route::prefix('user')
+            ->name('user.')
+            ->group(function () {
+                Route::resource('photos', 'App\Http\Controller\PhotoController');
+            });
+
+        $routes = Collector::create()
+            ->collect()
+            ->getCollectedRoutes();
+
+        self::assertSame('/user/photos', $routes[0]['prefix']);
+        self::assertSame('GET', $routes[0]['method']);
+
+        self::assertSame('/user/photos/create', $routes[1]['prefix']);
+        self::assertSame('GET', $routes[1]['method']);
+
+        self::assertSame('/user/photos', $routes[2]['prefix']);
+        self::assertSame('POST', $routes[2]['method']);
+
+        self::assertSame('/user/photos/{id:[0-9]+}', $routes[3]['prefix']);
+        self::assertSame('GET', $routes[3]['method']);
+
+        self::assertSame('/user/photos/{id:[0-9]+}/edit', $routes[4]['prefix']);
+        self::assertSame('GET', $routes[4]['method']);
+
+        self::assertSame('/user/photos/{id:[0-9]+}', $routes[5]['prefix']);
+        self::assertSame('PUT', $routes[5]['method']);
+
+        self::assertSame('/user/photos/{id:[0-9]+}', $routes[6]['prefix']);
+        self::assertSame('PATCH', $routes[6]['method']);
+
+        self::assertSame('/user/photos/{id:[0-9]+}', $routes[7]['prefix']);
+        self::assertSame('DELETE', $routes[7]['method']);
     }
 
     protected function setUp(): void
