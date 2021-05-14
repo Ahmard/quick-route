@@ -68,7 +68,7 @@ class DispatcherTest extends TestCase
         self::assertTrue($result->isFound());
     }
 
-    public function testDoubleForwardSlash()
+    public function testDoubleForwardSlash(): void
     {
         Route::restart();
         Route::get('/user/admin/', 'hello');
@@ -79,5 +79,32 @@ class DispatcherTest extends TestCase
             ->dispatch('get', '/user//admin');
 
         self::assertTrue($result->isFound());
+    }
+
+    public function testBadAmpersand(): void
+    {
+        Route::restart();
+        Route::get('/amp', 'hello');
+
+        $collector = Collector::create()->collect()->register();
+
+        $result = Dispatcher::create($collector)
+            ->dispatch('get', '/amp&a=3&r=4');
+
+        self::assertTrue($result->isFound());
+    }
+
+    public function testCollectorMethods(): void
+    {
+        Route::restart();
+        Route::get('users/profile', 'Controller@index');
+        $result = Dispatcher::collectRoutes()
+            ->dispatch('get', 'users/profile');
+
+        $result1 = Dispatcher::collectRoutesFile(__DIR__ . '/routes.php')
+            ->dispatch('post', '/user/save');
+
+        self::assertSame('/users/profile', $result->getRoute()->getPrefix());
+        self::assertSame('/user/save', $result1->getRoute()->getPrefix());
     }
 }

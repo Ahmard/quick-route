@@ -17,9 +17,38 @@ class Dispatcher
         $this->collector = $collector;
     }
 
-    public static function create(Collector $collector): self
+    /**
+     * Collect routes defined above or in included file
+     *
+     * @param array $routesInfo
+     * @return Dispatcher
+     */
+    public static function collectRoutes(array $routesInfo = []): Dispatcher
+    {
+        return self::create(Collector::collect($routesInfo));
+    }
+
+    /**
+     * Creates dispatcher instance
+     *
+     * @param Collector $collector
+     * @return Dispatcher
+     */
+    public static function create(Collector $collector): Dispatcher
     {
         return new self($collector);
+    }
+
+    /**
+     * Collect routes defined in a file
+     *
+     * @param string $filePath
+     * @param array $routesInfo
+     * @return Dispatcher
+     */
+    public static function collectRoutesFile(string $filePath, array $routesInfo = []): Dispatcher
+    {
+        return self::create(Collector::collectFile($filePath, $routesInfo));
     }
 
     /**
@@ -36,6 +65,12 @@ class Dispatcher
         if (false !== $pos = strpos($path, '?')) {
             $path = substr($path, 0, $pos);
         }
+
+        //invalid & in url at ? position
+        if (false !== $pos = strpos($path, '&')) {
+            $path = substr($path, 0, $pos);
+        }
+
         $path = str_replace('//', '/', $path);
         $path = rawurldecode($path);
 

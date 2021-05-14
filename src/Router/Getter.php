@@ -14,14 +14,23 @@ use QuickRoute\Route;
 class Getter
 {
     private static string $delimiter = '/';
+
     /**
      * @var array[]
      */
     private array $routes;
+
     /**
      * @var mixed[]
      */
     private array $routeDefaultData = [];
+
+    private array $defaultParameterTypes = [
+        'number' => '[0-9]',
+        'alpha' => '[a-zA-Z]',
+        'alphanumeric' => '[a-zA-Z0-9]',
+    ];
+
 
     public static function create(): self
     {
@@ -138,13 +147,17 @@ class Getter
                     $ready['prefix'] = self::$delimiter . $ready['prefix'];
 
                     //Clean prefix
+                    $ready['prefix'] = $this->addRegExpToParams(
+                        $ready['prefix'],
+                        $ready['parameterTypes']
+                    );
+
                     $this->routes[] = $ready;
                 }
 
                 if (isset($route['children'])) {
                     $this->build($route['children'], $data);
                 }
-
             }
         }
     }
@@ -182,11 +195,13 @@ class Getter
             'method' => $routeData['method'],
             'middleware' => array_merge_recursive($parentData['middleware'] ?? [], $routeData['middleware']),
             'fields' => array_merge($parentData['fields'] ?? [], $routeData['fields']),
+            'parameterTypes' => array_merge_recursive($parentData['parameterTypes'] ?? [], $routeData['parameterTypes']),
         ];
     }
 
     /**
      * Carefully join two prefix together
+     *
      * @param string $prefix1
      * @param string $prefix2
      * @return string
@@ -203,6 +218,7 @@ class Getter
 
     /**
      * Remove slash at the end of prefix
+     *
      * @param string $prefix
      * @return string
      */
@@ -218,6 +234,7 @@ class Getter
 
     /**
      * Remove slash at the beginning of prefix
+     *
      * @param string $prefix
      * @return string
      */
@@ -232,6 +249,7 @@ class Getter
 
     /**
      * Retrieve string from an array
+     *
      * @param string[] $array
      * @param string $key
      * @return string
@@ -239,5 +257,22 @@ class Getter
     private function getNullableString(array $array, string $key): string
     {
         return $array[$key] ?? '';
+    }
+
+    /**
+     * @param string $prefix
+     * @param array $regExpGroups
+     * @return string
+     */
+    private function addRegExpToParams(string $prefix, array $regExpGroups): string
+    {
+        foreach ($regExpGroups as $type => $regExpGroup) {
+            foreach ($regExpGroup as $regExp) {
+                $paramType = '{' . "$regExp:{$this->defaultParameterTypes[$type]}" . '}';
+                $prefix = str_replace('{' . $regExp . '}', $paramType, $prefix);
+            }
+        }
+
+        return $prefix;
     }
 }

@@ -2,11 +2,7 @@
 An elegant http router built on top of [FastRoute](https://github.com/nikic/FastRoute) to provide more easy of use.
 
 ## Upgrade Guide
-Changes to take note when upgrading from **v2.x** to **v3.x**
-* Namespace change from **QuickRoute\Route\Whatever** to **QuickRoute\Router\Whatever**
-* **Route::match()** added to support multiple routes registering at once
-* Caching now support closure routes
-* Unregistered **Collector** can now be passed to **Dispatcher**
+Check [ChangeLog](CHANGELOG.md) file
 
 ## Installation
 ```bash
@@ -19,7 +15,6 @@ Simple example
 
 ```php
 use QuickRoute\Route;
-use QuickRoute\Router\Collector;
 use QuickRoute\Router\Dispatcher;
 
 require('vendor/autoload.php');
@@ -28,14 +23,11 @@ Route::get('/', function () {
     echo 'Hello world';
 });
 
-//create route collector
-$collector = Collector::create()->collect();
-
 $method = $_SERVER['REQUEST_METHOD'];
 $path = $_SERVER['REQUEST_URI'];
 
 //create route dispatcher
-$dispatcher = Dispatcher::create($collector)
+$dispatcher = Dispatcher::collectRoutes()
     ->dispatch($method, $path);
 
 //determine dispatch result
@@ -90,6 +82,19 @@ Route::prefix('user')
     });
 
 // => /api/user/{token}
+```
+
+#### Defining route param types
+```php
+use QuickRoute\Route;
+
+// id => must be number
+Route::get('users/{id}', 'Controller@index')->whereNumber('id');
+// name => must be alphabetic
+Route::get('users/{name}', 'Controller@profile')->whereAlpha('name');
+// username => must be alphanumeric
+Route::get('users/{username}', 'Controller@profile')->whereAlphaNumeric('username');
+
 ```
 
 #### Route Fields
