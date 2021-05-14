@@ -162,7 +162,7 @@ use QuickRoute\Route;
 
 Route::resource('photos', 'App\Http\Controller\PhotoController');
 ```
-Code above will produce below routes 
+Code above will produce below routes <br/>
 ![alt text](resource-http-verbs.png)
 
 #### Routes as configuration
