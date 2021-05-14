@@ -139,8 +139,32 @@ interface RouteInterface
     public function resource(string $uri, string $controller, bool $integerId = true): RouteInterface;
 
     /**
+     * Indicates that the given route parameters must be number.
+     *
+     * @param string $parameterName
+     * @return RouteInterface
+     */
+    public function whereNumber(string $parameterName): RouteInterface;
+
+    /**
+     * Indicates that the given route parameters must be alphabetic.
+     *
+     * @param string $parameterName
+     * @return RouteInterface
+     */
+    public function whereAlpha(string $parameterName): RouteInterface;
+
+    /**
+     * Indicates that the given route parameters must be alphanumeric.
+     *
+     * @param string $parameterName
+     * @return RouteInterface
+     */
+    public function whereAlphaNumeric(string $parameterName): RouteInterface;
+
+    /**
      * Retrieve registered routes
-     * @return array<mixed>
+     * @return array
      */
     public function getRouteData(): array;
 

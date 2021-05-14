@@ -50,6 +50,15 @@ class Route
     }
 
     /**
+     * Add route class to list of routes
+     * @param TheRoute $route
+     */
+    public static function push(TheRoute $route): void
+    {
+        self::$called[] = $route;
+    }
+
+    /**
      * Create fresh router
      * @return TheRoute
      */
@@ -58,15 +67,6 @@ class Route
         $route = new TheRoute();
         self::push($route);
         return $route;
-    }
-
-    /**
-     * Add route class to list of routes
-     * @param TheRoute $route
-     */
-    public static function push(TheRoute $route): void
-    {
-        self::$called[] = $route;
     }
 
     /**

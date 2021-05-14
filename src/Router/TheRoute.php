@@ -17,6 +17,11 @@ class TheRoute implements RouteInterface, JsonSerializable
     protected string $prepend = '';
     protected string $method = '';
     protected array $fields = [];
+    protected array $parameterTypes = [
+        'number' => [],
+        'alpha' => [],
+        'alphanumeric' => []
+    ];
     protected Closure $group;
     protected TheRoute $parentRoute;
 
@@ -36,9 +41,9 @@ class TheRoute implements RouteInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function get(string $route, $handler): RouteInterface
+    public function head(string $route, $handler): RouteInterface
     {
-        return $this->addRoute('GET', $route, $handler);
+        return $this->addRoute('HEAD', $route, $handler);
     }
 
     /**
@@ -54,46 +59,6 @@ class TheRoute implements RouteInterface, JsonSerializable
         $this->prefix = $route;
         $this->handler = $handlerClass;
         return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function post(string $route, $handler): RouteInterface
-    {
-        return $this->addRoute('POST', $route, $handler);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function patch(string $route, $handler): RouteInterface
-    {
-        return $this->addRoute('PATCH', $route, $handler);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function put(string $route, $handler): RouteInterface
-    {
-        return $this->addRoute('PUT', $route, $handler);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function delete(string $route, $handler): RouteInterface
-    {
-        return $this->addRoute('DELETE', $route, $handler);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function head(string $route, $handler): RouteInterface
-    {
-        return $this->addRoute('HEAD', $route, $handler);
     }
 
     /**
@@ -140,7 +105,7 @@ class TheRoute implements RouteInterface, JsonSerializable
     public function resource(string $uri, string $controller, bool $integerId = true): RouteInterface
     {
         $id = $integerId ? '{id:[0-9]+}' : '{id}';
-        
+
         //  GET /whatever
         $route = new TheRoute($this);
         $route->get($uri, [$controller, 'index'])->name("{$uri}.index");
@@ -182,6 +147,46 @@ class TheRoute implements RouteInterface, JsonSerializable
         Route::push($route);
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function get(string $route, $handler): RouteInterface
+    {
+        return $this->addRoute('GET', $route, $handler);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function post(string $route, $handler): RouteInterface
+    {
+        return $this->addRoute('POST', $route, $handler);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function put(string $route, $handler): RouteInterface
+    {
+        return $this->addRoute('PUT', $route, $handler);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function patch(string $route, $handler): RouteInterface
+    {
+        return $this->addRoute('PATCH', $route, $handler);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function delete(string $route, $handler): RouteInterface
+    {
+        return $this->addRoute('DELETE', $route, $handler);
     }
 
     /**
@@ -262,6 +267,33 @@ class TheRoute implements RouteInterface, JsonSerializable
     /**
      * @inheritDoc
      */
+    public function whereNumber(string $parameterName): RouteInterface
+    {
+        array_push($this->parameterTypes['number'], $parameterName);
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function whereAlpha(string $parameterName): RouteInterface
+    {
+        array_push($this->parameterTypes['alpha'], $parameterName);
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function whereAlphaNumeric(string $parameterName): RouteInterface
+    {
+        array_push($this->parameterTypes['alphanumeric'], $parameterName);
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function jsonSerialize(): array
     {
         return $this->getData();
@@ -280,8 +312,9 @@ class TheRoute implements RouteInterface, JsonSerializable
             'name' => $this->name,
             'prepend' => $this->prepend,
             'append' => $this->append,
-            'group' => isset($this->group) ? $this->group : null,
+            'group' => $this->group ?? null,
             'fields' => $this->fields,
+            'parameterTypes' => $this->parameterTypes,
         ];
 
         if (isset($this->parentRoute)) {

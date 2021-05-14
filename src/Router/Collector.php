@@ -14,36 +14,42 @@ class Collector
 
     /**
      * List of routes to be collected
-     * @var mixed[] $collectableRoutes
+     *
+     * @var array $collectableRoutes
      */
     private array $collectableRoutes = [];
 
     /**
      * List of collected routes
+     *
      * @var array[] $collectedRoutes
      */
     private array $collectedRoutes = [];
 
     /**
      * A file to save cache in
+     *
      * @var string $cacheFile
      */
     private string $cacheFile = '';
 
     /**
      * Indicates that routes has closures in their handles
+     *
      * @var bool $routesHasClosures
      */
     private bool $routesHasClosures = true;
 
     /**
      * List of found cached routes
+     *
      * @var array[] $cachedRoutes
      */
     private array $cachedRoutes = [];
 
     /**
      * A fast-route compatible route data
+     *
      * @var array[] $fastRouteData
      */
     private array $fastRouteData = [];
@@ -51,6 +57,7 @@ class Collector
     /**
      * An indicator whether cache will collected
      * This is important as to not re-collect routes by calling different methods that invoke doCollectRoute() method
+     *
      * @var bool $willCollect
      */
     private bool $willCollect = false;
@@ -58,19 +65,40 @@ class Collector
     /**
      * Indicates whether this collector has been registered or not
      * This will be useful to help avoid re-registering single collector
+     *
      * @var bool $isRegistered
      */
     private bool $isRegistered = false;
 
     /**
      * Route prefix delimiter
+     *
      * @var string $delimiter
      */
     private string $delimiter = '/';
 
+    /**
+     * Collect routes defined in a file
+     *
+     * @param string $filePath
+     * @param array $routesInfo
+     * @return Collector
+     */
+    public static function collectFile(string $filePath, array $routesInfo = []): Collector
+    {
+        $instance = self::create();
+        $instance->willCollect = true;
+        $instance->collectableRoutes[] = [
+            'file' => $filePath,
+            'data' => $routesInfo,
+        ];
+
+        return $instance;
+    }
 
     /**
      * Create an instance of collector
+     *
      * @return Collector
      */
     public static function create(): self
@@ -79,39 +107,25 @@ class Collector
     }
 
     /**
-     * Collect routes in file
-     * @param string $filePath
-     * @param mixed[] $routesInfo
-     * @return $this
+     * Collect routes defined above or in included file
+     *
+     * @param array $routesInfo
+     * @return Collector
      */
-    public function collectFile(string $filePath, array $routesInfo = []): self
+    public static function collect(array $routesInfo = []): Collector
     {
-        $this->willCollect = true;
-        $this->collectableRoutes[] = [
-            'file' => $filePath,
+        $instance = self::create();
+        $instance->willCollect = true;
+        $instance->collectableRoutes[] = [
             'data' => $routesInfo,
         ];
 
-        return $this;
-    }
-
-    /**
-     * Collect routes
-     * @param mixed[] $routesInfo
-     * @return $this
-     */
-    public function collect(array $routesInfo = []): self
-    {
-        $this->willCollect = true;
-        $this->collectableRoutes[] = [
-            'data' => $routesInfo,
-        ];
-
-        return $this;
+        return $instance;
     }
 
     /**
      * Cache this group
+     *
      * @param string $cacheFile Location to cache file
      * @param bool $hasClosures Indicates that routes has closures in their handlers.
      * This will tell caching lib to not look closures.
@@ -127,6 +141,7 @@ class Collector
 
     /**
      * Set custom route prefix delimiter
+     *
      * @param string $delimiter
      * @return $this
      */
@@ -138,6 +153,7 @@ class Collector
 
     /**
      * Register routes to FastRoute
+     *
      * @return $this
      */
     public function register(): self
@@ -168,6 +184,7 @@ class Collector
 
     /**
      * Perform route collection
+     *
      * @return void
      */
     private function doCollectRoutes(): void
@@ -191,26 +208,16 @@ class Collector
                 Route::restart();
                 require $collectableFile;
                 //Store collected routes
-                $this->collectedRoutes = array_merge(
-                    $this->collectedRoutes,
-                    Getter::create()
-                        ->prefixDelimiter($this->delimiter)
-                        ->get(
-                            Route::getRoutes(),
-                            $collectableRoute['data']
-                        )
-                );
-            } else {
-                $this->collectedRoutes = array_merge(
-                    $this->collectedRoutes,
-                    Getter::create()
-                        ->prefixDelimiter($this->delimiter)
-                        ->get(
-                            Route::getRoutes(),
-                            $collectableRoute['data']
-                        )
-                );
             }
+            $this->collectedRoutes = array_merge(
+                $this->collectedRoutes,
+                Getter::create()
+                    ->prefixDelimiter($this->delimiter)
+                    ->get(
+                        Route::getRoutes(),
+                        $collectableRoute['data']
+                    )
+            );
         }
 
         $this->willCollect = false;
@@ -218,6 +225,7 @@ class Collector
 
     /**
      * Get FastRoute's route collector
+     *
      * @param bool $createNew
      * @return FastRouteCollector
      */
@@ -236,6 +244,7 @@ class Collector
 
     /**
      * Get collected routes, array of routes
+     *
      * @return array[]
      */
     public function getCollectedRoutes(): array
@@ -255,6 +264,7 @@ class Collector
 
     /**
      * Get computed route
+     *
      * @return array[]
      */
     public function getFastRouteData(): array
@@ -264,6 +274,7 @@ class Collector
 
     /**
      * Checks whether this collector has been registered
+     *
      * @return bool
      */
     public function isRegistered(): bool

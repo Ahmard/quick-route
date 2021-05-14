@@ -105,7 +105,7 @@ class RouteData implements JsonSerializable
 
     /**
      * Get route data as array
-     * @return array<mixed>
+     * @return array
      */
     public function getData(): array
     {
