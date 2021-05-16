@@ -77,8 +77,6 @@ class Collector
      */
     private string $delimiter = '/';
 
-    private static Collector $instance;
-
 
     /**
      * Collect routes defined in a file
@@ -105,7 +103,7 @@ class Collector
      */
     public static function create(): self
     {
-        return self::$instance = new self();
+        return new self();
     }
 
     /**
