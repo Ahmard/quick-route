@@ -17,7 +17,7 @@ class CollectorTest extends TestCase
             ->collect();
 
         $fileCollector = Collector::create()
-            ->collectFile(__DIR__ . '/routes.php');
+            ->collectFile(__DIR__ . '/routes-1.php');
 
         $this->assertCount(2, $collector->getCollectedRoutes());
         $this->assertCount(3, $fileCollector->getCollectedRoutes());
@@ -26,7 +26,7 @@ class CollectorTest extends TestCase
     public function testDispatcher(): void
     {
         $collector = Collector::create()
-            ->collectFile(__DIR__ . '/routes.php');
+            ->collectFile(__DIR__ . '/routes-1.php');
 
         $collectedRoutes = $collector->getCollectedRoutes();
 
@@ -50,13 +50,29 @@ class CollectorTest extends TestCase
     public function testIsRegisterMethod(): void
     {
         $collector = Collector::create()
-            ->collectFile(__DIR__ . '/routes.php');
+            ->collectFile(__DIR__ . '/routes-1.php');
 
         self::assertFalse($collector->isRegistered());
 
         $collector->register();
 
         self::assertTrue($collector->isRegistered());
+    }
+
+    public function testMultipleRouteFileCollection()
+    {
+        $collector = Collector::create()
+            ->collectFile(__DIR__ . '/routes-1.php')
+            ->collectFile(__DIR__ . '/routes-2.php');
+
+        $dispatchResult1 = Dispatcher::create($collector)
+            ->dispatch('POST', 'user/save');
+
+        $dispatchResult2 = Dispatcher::create($collector)
+            ->dispatch('POST', 'admin/save');
+
+        self::assertTrue($dispatchResult1->isFound());
+        self::assertTrue($dispatchResult2->isFound());
     }
 
     protected function setUp(): void

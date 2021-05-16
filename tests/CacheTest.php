@@ -13,7 +13,7 @@ class CacheTest extends TestCase
     public function testCaching(): void
     {
         Collector::create()
-            ->collectFile(__DIR__ . '/routes.php')
+            ->collectFile(__DIR__ . '/routes-1.php')
             ->cache(__DIR__ . '/route-cache.php')
             ->register();
 

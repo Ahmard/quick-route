@@ -77,6 +77,9 @@ class Collector
      */
     private string $delimiter = '/';
 
+    private static Collector $instance;
+
+
     /**
      * Collect routes defined in a file
      *
@@ -86,14 +89,17 @@ class Collector
      */
     public static function collectFile(string $filePath, array $routesInfo = []): Collector
     {
-        $instance = self::create();
-        $instance->willCollect = true;
-        $instance->collectableRoutes[] = [
+        if (!isset(self::$instance)) {
+            self::$instance = self::create();
+        }
+
+        self::$instance->willCollect = true;
+        self::$instance->collectableRoutes[] = [
             'file' => $filePath,
             'data' => $routesInfo,
         ];
 
-        return $instance;
+        return self::$instance;
     }
 
     /**
@@ -103,7 +109,7 @@ class Collector
      */
     public static function create(): self
     {
-        return new self();
+        return self::$instance = new self();
     }
 
     /**
@@ -114,13 +120,16 @@ class Collector
      */
     public static function collect(array $routesInfo = []): Collector
     {
-        $instance = self::create();
-        $instance->willCollect = true;
-        $instance->collectableRoutes[] = [
+        if (!isset(self::$instance)) {
+            self::$instance = self::create();
+        }
+
+        self::$instance->willCollect = true;
+        self::$instance->collectableRoutes[] = [
             'data' => $routesInfo,
         ];
 
-        return $instance;
+        return self::$instance;
     }
 
     /**
