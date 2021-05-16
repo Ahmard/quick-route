@@ -87,19 +87,15 @@ class Collector
      * @param array $routesInfo
      * @return Collector
      */
-    public static function collectFile(string $filePath, array $routesInfo = []): Collector
+    public function collectFile(string $filePath, array $routesInfo = []): Collector
     {
-        if (!isset(self::$instance)) {
-            self::$instance = self::create();
-        }
-
-        self::$instance->willCollect = true;
-        self::$instance->collectableRoutes[] = [
+        $this->willCollect = true;
+        $this->collectableRoutes[] = [
             'file' => $filePath,
             'data' => $routesInfo,
         ];
 
-        return self::$instance;
+        return $this;
     }
 
     /**
@@ -118,18 +114,14 @@ class Collector
      * @param array $routesInfo
      * @return Collector
      */
-    public static function collect(array $routesInfo = []): Collector
+    public function collect(array $routesInfo = []): Collector
     {
-        if (!isset(self::$instance)) {
-            self::$instance = self::create();
-        }
-
-        self::$instance->willCollect = true;
-        self::$instance->collectableRoutes[] = [
+        $this->willCollect = true;
+        $this->collectableRoutes[] = [
             'data' => $routesInfo,
         ];
 
-        return self::$instance;
+        return $this;
     }
 
     /**
