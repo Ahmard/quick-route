@@ -100,8 +100,9 @@ class DispatcherTest extends TestCase
         Route::get('users/profile', 'Controller@index');
         $result = Dispatcher::collectRoutes()
             ->dispatch('get', 'users/profile');
+        //dd($result->isFound());
 
-        $result1 = Dispatcher::collectRoutesFile(__DIR__ . '/routes.php')
+        $result1 = Dispatcher::collectRoutesFile(__DIR__ . '/routes-1.php')
             ->dispatch('post', '/user/save');
 
         self::assertSame('/users/profile', $result->getRoute()->getPrefix());

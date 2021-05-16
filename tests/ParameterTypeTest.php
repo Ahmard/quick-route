@@ -16,7 +16,10 @@ class ParameterTypeTest extends TestCase
         Route::restart();
         Route::get('/users/{id}', 'MainController@index')->whereNumber('id');
 
-        $expectedPrefix = Collector::collect()->getCollectedRoutes()[0]['prefix'];
+        $expectedPrefix = Collector::create()
+            ->collect()
+            ->getCollectedRoutes()[0]['prefix'];
+
         assertTrue(true);
         assertSame('/users/{id:[0-9]}', $expectedPrefix);
     }
@@ -36,7 +39,10 @@ class ParameterTypeTest extends TestCase
                 });
         });
 
-        $routes = Collector::collect()->getCollectedRoutes();
+        $routes = Collector::create()
+            ->collect()
+            ->getCollectedRoutes();
+
         assertSame('/users', $routes[0]['prefix']);
         assertSame('/users/{id:[0-9]}', $routes[1]['prefix']);
         assertSame('/users/{id:[0-9]}/posts/{pid:[0-9]}-{pTitle:[a-zA-Z0-9]}', $routes[2]['prefix']);

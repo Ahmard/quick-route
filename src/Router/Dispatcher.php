@@ -25,7 +25,7 @@ class Dispatcher
      */
     public static function collectRoutes(array $routesInfo = []): Dispatcher
     {
-        return self::create(Collector::collect($routesInfo));
+        return self::create(Collector::create()->collect($routesInfo));
     }
 
     /**
@@ -48,7 +48,7 @@ class Dispatcher
      */
     public static function collectRoutesFile(string $filePath, array $routesInfo = []): Dispatcher
     {
-        return self::create(Collector::collectFile($filePath, $routesInfo));
+        return self::create(Collector::create()->collectFile($filePath, $routesInfo));
     }
 
     /**
