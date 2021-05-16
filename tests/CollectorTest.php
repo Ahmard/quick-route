@@ -59,7 +59,7 @@ class CollectorTest extends TestCase
         self::assertTrue($collector->isRegistered());
     }
 
-    public function testMultipleRouteFileCollection()
+    public function testMultipleRouteFileCollection(): void
     {
         $collector = Collector::create()
             ->collectFile(__DIR__ . '/routes-1.php')
