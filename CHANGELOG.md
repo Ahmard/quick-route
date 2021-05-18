@@ -22,20 +22,3 @@ Dispatcher::collectRoutes()->dispatch('get', '/');
 //Collect routes in file
 Dispatcher::collectRoutesFile('routes.php')->dispatch('get', '/');
 ```
-* Changes
-- Collector::collect is now static method
-```php
-use QuickRoute\Router\Collector;
-
-Collector::create()->collect();
-//Can now be written as
-Collector::collect();
-```
-- Collector::collectFile is now static method
-```php
-use QuickRoute\Router\Collector;
-
-Collector::create()->collectFile('routes.php');
-//Can now be written as
-Collector::collectFile('routes.php');
-```
