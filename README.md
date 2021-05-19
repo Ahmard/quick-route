@@ -161,6 +161,24 @@ $dispatchResult2 = Dispatcher::create($collector)
     ->dispatch('get', '/admin/login');
 ```
 
+#### Route::matchAny()
+
+```php
+use QuickRoute\Route;
+
+Route::matchAny(
+    ['get', 'post'], 
+    ['/customer/login', '/admin/login'],
+    'MainController@index'
+);
+
+//Which is equivalent to:
+Route::get('/customer/login', 'MainController@index');
+Route::post('/customer/login', 'MainController@index');
+Route::get('/admin/login', 'MainController@index');
+Route::post('/admin/login', 'MainController@index');
+```
+
 #### Route::resource()
 
 ```php
@@ -266,6 +284,19 @@ $dispatchResult = Dispatcher::create($collector)
     ->dispatch('get', 'hello.world');
 
 var_export($dispatchResult);
+```
+
+#### Finding route & generating route uri
+
+```php
+use QuickRoute\Route;
+use QuickRoute\Router\Dispatcher;
+
+Route::get('/users', 'Controller@method')->name('users.index');
+
+$result = Dispatcher::collectRoutes()->dispatch('get', '/');
+echo $result->uri('users.index');  // => /users
+$result->route('users.index'); // => Array of route data
 ```
 
 #### Note

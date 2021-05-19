@@ -277,6 +277,22 @@ class RouteRegisterTest extends TestCase
         self::assertSame('DELETE', $routes[7]['method']);
     }
 
+    public function testMatchAny(): void
+    {
+        Route::restart();
+        Route::matchAny(['get', 'post'], ['/customer/login', '/admin/login'],'MainController@index');
+        $routes = Collector::create()->collect()->getCollectedRoutes();
+
+        self::assertSame('GET', $routes[0]['method']);
+        self::assertSame('/customer/login', $routes[0]['prefix']);
+        self::assertSame('GET', $routes[1]['method']);
+        self::assertSame('/admin/login', $routes[1]['prefix']);
+        self::assertSame('POST', $routes[2]['method']);
+        self::assertSame('/customer/login', $routes[2]['prefix']);
+        self::assertSame('POST', $routes[3]['method']);
+        self::assertSame('/admin/login', $routes[3]['prefix']);
+    }
+
     protected function setUp(): void
     {
         Route::restart();

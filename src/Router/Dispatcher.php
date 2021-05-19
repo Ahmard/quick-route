@@ -86,7 +86,7 @@ class Dispatcher
         $urlData = $this->createDispatcher()
             ->dispatch(strtoupper($method), $path);
 
-        return new DispatchResult($urlData);
+        return new DispatchResult($urlData, $this->collector->getCollectedRoutes());
     }
 
     /**
