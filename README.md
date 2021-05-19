@@ -286,6 +286,19 @@ $dispatchResult = Dispatcher::create($collector)
 var_export($dispatchResult);
 ```
 
+#### Finding route & generating route uri
+
+```php
+use QuickRoute\Route;
+use QuickRoute\Router\Dispatcher;
+
+Route::get('/users', 'Controller@method')->name('users.index');
+
+$result = Dispatcher::collectRoutes()->dispatch('get', '/');
+echo $result->uri('users.index');  // => /users
+$result->route('users.index'); // => Array of route data
+```
+
 #### Note
 - You must be careful when using **Collector::collect()** and **Collector::collectFile()** together, 
 as collectFile method will clear previously collected routes before it starts collecting.<br/>
