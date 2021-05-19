@@ -107,27 +107,4 @@ class DispatcherTest extends TestCase
         self::assertSame('/users/profile', $result->getRoute()->getPrefix());
         self::assertSame('/user/save', $result1->getRoute()->getPrefix());
     }
-
-    public function testHelpers(): void
-    {
-        Route::restart();
-        Route::get('/', 'Controller@method')->name('home');
-        Route::get('/users/{id}/{name}', 'HelloController')
-            ->whereAlpha('id')
-            ->name('user.info');
-
-        $result = Dispatcher::collectRoutes()->dispatch('get', '/');
-        $uri = $result->uri('user.info', [
-            'id' => 1,
-            'name' => 'ahmard'
-        ]);
-
-        $route = $result->route('home');
-
-        self::assertTrue($result->isFound());
-        self::assertIsArray($route);
-        self::assertSame('Controller@method', $route['handler'] ?? null);
-        self::assertSame('/users/1/ahmard', $uri);
-    }
-
 }

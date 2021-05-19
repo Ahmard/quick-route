@@ -290,13 +290,13 @@ var_export($dispatchResult);
 
 ```php
 use QuickRoute\Route;
-use QuickRoute\Router\Dispatcher;
+use QuickRoute\Router\Collector;
 
 Route::get('/users', 'Controller@method')->name('users.index');
 
-$result = Dispatcher::collectRoutes()->dispatch('get', '/');
-echo $result->uri('users.index');  // => /users
-$result->route('users.index'); // => Array of route data
+$collector = Collector::create()->collect();
+echo $collector->uri('users.index');  // => /users
+$collector->route('users.index'); // => Array of route data
 ```
 
 #### Note

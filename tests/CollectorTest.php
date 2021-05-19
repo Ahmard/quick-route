@@ -75,6 +75,28 @@ class CollectorTest extends TestCase
         self::assertTrue($dispatchResult2->isFound());
     }
 
+    public function testHelpers(): void
+    {
+        Route::restart();
+        Route::get('/', 'Controller@method')->name('home');
+        Route::get('/users/{id}/{name}', 'HelloController')
+            ->whereAlpha('id')
+            ->name('user.info');
+
+        $result = Dispatcher::collectRoutes()->dispatch('get', '/');
+        $uri = $result->getCollector()->uri('user.info', [
+            'id' => 1,
+            'name' => 'ahmard'
+        ]);
+
+        $route = $result->getCollector()->route('home');
+
+        self::assertTrue($result->isFound());
+        self::assertIsArray($route);
+        self::assertSame('Controller@method', $route['handler'] ?? null);
+        self::assertSame('/users/1/ahmard', $uri);
+    }
+
     protected function setUp(): void
     {
         Route::restart();

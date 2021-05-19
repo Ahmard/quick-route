@@ -3,9 +3,10 @@
 ## v3.6 to v3.7
 ### New Methods
 - RouteInterface::matchAny(array $methods, array $paths, $handler): RouteInterface - Generate multiple routes using multiple method and path but single handle
-- DispatchResult::route(string $routeName): ?array - This is to find route by its name
-- DispatchResult::uri(string $routeName): ?string - Generate route uri using route's name
+- Collector::route(string $routeName): ?array - This is to find route by its name
+- Collector::uri(string $routeName): ?string - Generate route uri using route's name
 
+#### RouteInterface::matchAny()
 ```php
 use QuickRoute\Route;
 
@@ -20,6 +21,18 @@ Route::get('/customer/login', 'MainController@index');
 Route::post('/customer/login', 'MainController@index');
 Route::get('/admin/login', 'MainController@index');
 Route::post('/admin/login', 'MainController@index');
+```
+#### Finding route & generating route uri
+
+```php
+use QuickRoute\Route;
+use QuickRoute\Router\Collector;
+
+Route::get('/users', 'Controller@method')->name('users.index');
+
+$collector = Collector::create()->collect();
+echo $collector->uri('users.index');  // => /users
+$collector->route('users.index'); // => Array of route data
 ```
 
 
