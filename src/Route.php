@@ -22,7 +22,7 @@ use QuickRoute\Router\TheRoute;
  * @method static TheRoute head(string $uri, callable|mixed $handler) Register route to multiple http verbs
  * @method static TheRoute match(array|string $methods, string $uri, callable|mixed $handler) Register this route as HEAD
  * @method static TheRoute any(array|string $paths, string $method, callable|mixed $handler) Register multiple paths to single handler
- * @method static TheRoute resource(string $route, string $controller, bool $integerId = true) A single to handle variety of actions on the resource.
+ * @method static TheRoute resource(string $route, string $controller, string $idParameterName = 'id', bool $integerId = true) A single to handle variety of actions on the resource.
  * @method static TheRoute addField(string $name, callable|mixed $handler) Add field of data route collection
  */
 class Route

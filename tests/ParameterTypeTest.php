@@ -21,10 +21,29 @@ class ParameterTypeTest extends TestCase
             ->getCollectedRoutes()[0]['prefix'];
 
         assertTrue(true);
-        assertSame('/users/{id:[0-9]}', $expectedPrefix);
+        assertSame('/users/{id:[0-9]+}', $expectedPrefix);
     }
 
-    public function testAdvance(): void
+    public function testWhereMethod(): void
+    {
+        Route::restart();
+        Route::get('posts/{post}', 'PostController')->where('post', '[0-9]+');
+        Route::get('users/{uid}/posts/{postId}-{postName}', 'PostController')
+            ->whereNumber('uid')
+            ->where([
+                'postId' => '[0-9]+',
+                'postName' => '[0-9a-zA-Z]+'
+            ]);
+
+        $routes = Collector::create()
+            ->collect()
+            ->getCollectedRoutes();
+
+        assertSame('/posts/{post:[0-9]+}', $routes[0]['prefix']);
+        assertSame('/users/{uid:[0-9]+}/posts/{postId:[0-9]+}-{postName:[0-9a-zA-Z]+}', $routes[1]['prefix']);
+    }
+
+    public function testOtherMethods(): void
     {
         Route::restart();
         Route::prefix('users')->group(function () {
@@ -44,7 +63,7 @@ class ParameterTypeTest extends TestCase
             ->getCollectedRoutes();
 
         assertSame('/users', $routes[0]['prefix']);
-        assertSame('/users/{id:[0-9]}', $routes[1]['prefix']);
-        assertSame('/users/{id:[0-9]}/posts/{pid:[0-9]}-{pTitle:[a-zA-Z0-9]}', $routes[2]['prefix']);
+        assertSame('/users/{id:[0-9]+}', $routes[1]['prefix']);
+        assertSame('/users/{id:[0-9]+}/posts/{pid:[0-9]+}-{pTitle:[a-zA-Z0-9]+}', $routes[2]['prefix']);
     }
 }

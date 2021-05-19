@@ -223,12 +223,30 @@ class RouteRegisterTest extends TestCase
 
     public function testResource(): void
     {
+        $this->resourceTester();
+    }
+
+    public function testResourceWithCustomIdParamName(): void
+    {
+        $this->resourceTester('userId');
+    }
+
+    public function testResourceWithNonIntegerParam(): void
+    {
+        $this->resourceTester('userId', false);
+    }
+
+    public function resourceTester(string $idParamName = 'id', bool $integerParam = true): void
+    {
+        $idParam = '';
         Route::restart();
         Route::prefix('user')
             ->name('user.')
-            ->group(function () {
-                Route::resource('photos', 'App\Http\Controller\PhotoController');
+            ->group(function () use ($idParamName, $integerParam, &$idParam) {
+                $idParam = $integerParam ? '{' . $idParamName . ':[0-9]+}' : '{' . $idParamName . '}';
+                Route::resource('photos', 'App\Http\Controller\PhotoController', $idParamName, $integerParam);
             });
+
 
         $routes = Collector::create()
             ->collect()
@@ -243,19 +261,19 @@ class RouteRegisterTest extends TestCase
         self::assertSame('/user/photos', $routes[2]['prefix']);
         self::assertSame('POST', $routes[2]['method']);
 
-        self::assertSame('/user/photos/{id:[0-9]+}', $routes[3]['prefix']);
+        self::assertSame('/user/photos/' . $idParam, $routes[3]['prefix']);
         self::assertSame('GET', $routes[3]['method']);
 
-        self::assertSame('/user/photos/{id:[0-9]+}/edit', $routes[4]['prefix']);
+        self::assertSame('/user/photos/' . $idParam . '/edit', $routes[4]['prefix']);
         self::assertSame('GET', $routes[4]['method']);
 
-        self::assertSame('/user/photos/{id:[0-9]+}', $routes[5]['prefix']);
+        self::assertSame('/user/photos/' . $idParam, $routes[5]['prefix']);
         self::assertSame('PUT', $routes[5]['method']);
 
-        self::assertSame('/user/photos/{id:[0-9]+}', $routes[6]['prefix']);
+        self::assertSame('/user/photos/' . $idParam, $routes[6]['prefix']);
         self::assertSame('PATCH', $routes[6]['method']);
 
-        self::assertSame('/user/photos/{id:[0-9]+}', $routes[7]['prefix']);
+        self::assertSame('/user/photos/' . $idParam, $routes[7]['prefix']);
         self::assertSame('DELETE', $routes[7]['method']);
     }
 

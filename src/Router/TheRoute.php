@@ -6,6 +6,7 @@ use Closure;
 use JsonSerializable;
 use QuickRoute\Route;
 use QuickRoute\RouteInterface;
+use ValueError;
 
 class TheRoute implements RouteInterface, JsonSerializable
 {
@@ -20,7 +21,8 @@ class TheRoute implements RouteInterface, JsonSerializable
     protected array $parameterTypes = [
         'number' => [],
         'alpha' => [],
-        'alphanumeric' => []
+        'alphanumeric' => [],
+        'regExp' => [],
     ];
     protected Closure $group;
     protected TheRoute $parentRoute;
@@ -102,9 +104,16 @@ class TheRoute implements RouteInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function resource(string $uri, string $controller, bool $integerId = true): RouteInterface
+    public function resource(
+        string $uri,
+        string $controller,
+        string $idParameterName = 'id',
+        bool $integerId = true
+    ): RouteInterface
     {
-        $id = $integerId ? '{id:[0-9]+}' : '{id}';
+        $id = $integerId
+            ? '{' . "$idParameterName:[0-9]+" . '}'
+            : '{' . "$idParameterName" . '}';
 
         //  GET /whatever
         $route = new TheRoute($this);
@@ -261,6 +270,23 @@ class TheRoute implements RouteInterface, JsonSerializable
     public function addField(string $name, $value): RouteInterface
     {
         $this->fields[$name] = $value;
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function where($parameter, ?string $regExp = null): RouteInterface
+    {
+        if (is_array($parameter)) {
+            $this->parameterTypes['regExp'] = array_merge($this->parameterTypes['regExp'], $parameter);
+        } else {
+            if (null === $regExp) {
+                throw new ValueError('Second parameter must not be null when string is passed to first parameter.');
+            }
+            $this->parameterTypes['regExp'] += [$parameter => $regExp];
+        }
+
         return $this;
     }
 
