@@ -286,14 +286,14 @@ class Collector
      * Find route by name
      *
      * @param string $routeName
-     * @return array|null
+     * @return RouteData|null
      */
-    public function route(string $routeName): ?array
+    public function route(string $routeName): ?RouteData
     {
         $this->doCollectRoutes();
         foreach ($this->collectedRoutes as $collectedRoute) {
             if ($routeName == $collectedRoute['name']) {
-                return $collectedRoute;
+                return new RouteData($collectedRoute);
             }
         }
 
@@ -312,7 +312,7 @@ class Collector
         $foundRoute = $this->route($routeName);
         if (!$foundRoute) return null;
 
-        $prefix = $foundRoute['prefix'] ?? null;
+        $prefix = $foundRoute->getPrefix() ?? null;
         if (!$prefix) return null;
 
         return $this->replaceParamWithValue($prefix, $routeParams);
