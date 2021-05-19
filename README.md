@@ -141,6 +141,17 @@ $dispatchResult = Dispatcher::create($collector)
 var_export($dispatchResult->getRoute());
 ```
 
+#### Route::match() with named routes
+```php
+use QuickRoute\Route;
+
+Route::match(['get', 'post'], 'login', 'AuthController@login')->name('login.');
+
+//Will generate below routes
+Route::get('login', 'AuthController@login')->name('login.get');
+Route::post('login', 'AuthController@login')->name('login.post');
+```
+
 #### Route::any()
 
 ```php
