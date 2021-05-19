@@ -140,7 +140,6 @@ class RouteRegisterTest extends TestCase
         $fn = fn() => print time();
         Route::restart();
         Route::match(['GET', 'POST'], 'login', $fn)
-            ->name('login')
             ->namespace('Auth');
 
         Route::match(['DELETE', 'GET'], 'user', $fn)
@@ -156,12 +155,28 @@ class RouteRegisterTest extends TestCase
             ->dispatch('delete', '/user');
 
         self::assertSame([], $dispatchResult1->getRoute()->getMiddleware());
-        self::assertSame('login', $dispatchResult1->getRoute()->getName());
         self::assertSame('Auth\\', $dispatchResult1->getRoute()->getNamespace());
         self::assertSame(['auth'], $dispatchResult2->getRoute()->getMiddleware());
         self::assertSame([
             'test' => 'field'
         ], $dispatchResult2->getRoute()->getFields());
+    }
+
+    public function testMatchWithNamedRoutes(): void
+    {
+        Route::restart();
+
+        Route::match(['get', 'post'], 'login', ['showLoginForm'])->name('login.');
+        Route::match(['get', 'post'], 'register', ['showRegisterForm'])->name('register.');
+
+        $routes = Collector::create()
+            ->collect()
+            ->getCollectedRoutes();
+
+        self::assertSame('login.get', $routes[0]['name']);
+        self::assertSame('login.post', $routes[1]['name']);
+        self::assertSame('register.get', $routes[2]['name']);
+        self::assertSame('register.post', $routes[3]['name']);
     }
 
     public function testAny(): void

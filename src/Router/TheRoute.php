@@ -71,6 +71,7 @@ class TheRoute implements RouteInterface, JsonSerializable
         foreach ($methods as $method) {
             $method = strtolower($method);
             $route = new TheRoute($this);
+            $route->name(strtolower($method));
             Route::push($route);
             $route->$method($uri, $handler);
         }

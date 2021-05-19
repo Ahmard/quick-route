@@ -6,6 +6,7 @@
 - Collector::route(string $routeName): ?array - This is to find route by its name
 - Collector::uri(string $routeName): ?string - Generate route uri using route's name
 - RouteData::getRegExp() - This will return regular expression defined within the route's prefix/pth 
+- RouteInterface::match() will now add route name based on the used request method
 
 #### RouteInterface::matchAny()
 ```php
@@ -36,6 +37,17 @@ echo $collector->uri('users.index');  // => /users
 $collector->route('users.index'); // => Instance of QuickRoute\Route\RouteData
 ```
 
+#### Route::match() with route name
+
+```php
+use QuickRoute\Route;
+
+Route::match(['get', 'post'], 'login', 'AuthController@login')->name('login.');
+
+//Will generate below routes
+Route::get('login', 'AuthController@login')->name('login.get');
+Route::post('login', 'AuthController@login')->name('login.post');
+```
 
 ## v3.5 to v3.6
 ### New Methods

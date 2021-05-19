@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use QuickRoute\Route;
 use QuickRoute\Router\Collector;
 use QuickRoute\Router\Dispatcher;
+use QuickRoute\Router\RouteData;
 
 class CollectorTest extends TestCase
 {
@@ -92,7 +93,8 @@ class CollectorTest extends TestCase
         $route = $result->getCollector()->route('home');
 
         self::assertTrue($result->isFound());
-        self::assertIsArray($route);
+        self::assertInstanceOf(RouteData::class, $route);
+        /**@phpstan-ignore-next-line**/
         self::assertSame('Controller@method', $route->getHandler() ?? null);
         self::assertSame('/users/1/ahmard', $uri);
     }
