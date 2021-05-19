@@ -5,9 +5,10 @@ use QuickRoute\Router\Dispatcher;
 
 require 'vendor/autoload.php';
 
-Route::prefix('school')->name('school')
-    ->group(function (){
-        Route::matchAny(['get', 'post'], ['/customer/login', '/admin/login'],'MainController@index')->name('login');
-    });
+use QuickRoute\Router\Collector;
 
-dd(\QuickRoute\Router\Collector::create()->collect()->getCollectedRoutes());
+Route::get('/users', 'Controller@method')->name('users.index');
+
+$collector = Collector::create()->collect();
+var_dump($collector->uri('users.index'));  // => /users
+$collector->route('users.index'); // => Array of route data
