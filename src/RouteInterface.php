@@ -133,10 +133,25 @@ interface RouteInterface
      *
      * @param string $uri
      * @param string $controller
+     * @param string $idParameterName Specifies what name should be given to generated id parameter
      * @param bool $integerId Specifies that id associated with this route must be integer
      * @return RouteInterface
      */
-    public function resource(string $uri, string $controller, bool $integerId = true): RouteInterface;
+    public function resource(
+        string $uri,
+        string $controller,
+        string $idParameterName = 'id',
+        bool $integerId = true
+    ): RouteInterface;
+
+    /**
+     * Manually provide regular expression pattern to parameter
+     *
+     * @param string|array $parameter
+     * @param string|null $regExp
+     * @return RouteInterface
+     */
+    public function where($parameter, ?string $regExp = null): RouteInterface;
 
     /**
      * Indicates that the given route parameters must be number.

@@ -95,6 +95,12 @@ Route::get('users/{name}', 'Controller@profile')->whereAlpha('name');
 // username => must be alphanumeric
 Route::get('users/{username}', 'Controller@profile')->whereAlphaNumeric('username');
 
+// Manually provide regular expression pattern to match parameter with
+Route::get('/users/{id}', 'a')->where('id', '[0-9]+');
+Route::get('/users/{user}/posts/{post}', 'Ctrl@method')->where([
+    'user' => '[a-zA-Z]+',
+    'post' => '[0-9]+'
+]);
 ```
 
 #### Route Fields

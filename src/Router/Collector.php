@@ -77,6 +77,15 @@ class Collector
      */
     private string $delimiter = '/';
 
+    /**
+     * Create an instance of collector
+     *
+     * @return Collector
+     */
+    public static function create(): self
+    {
+        return new self();
+    }
 
     /**
      * Collect routes defined in a file
@@ -94,16 +103,6 @@ class Collector
         ];
 
         return $this;
-    }
-
-    /**
-     * Create an instance of collector
-     *
-     * @return Collector
-     */
-    public static function create(): self
-    {
-        return new self();
     }
 
     /**

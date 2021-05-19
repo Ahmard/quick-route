@@ -26,9 +26,9 @@ class Getter
     private array $routeDefaultData = [];
 
     private array $defaultParameterTypes = [
-        'number' => '[0-9]',
-        'alpha' => '[a-zA-Z]',
-        'alphanumeric' => '[a-zA-Z0-9]',
+        'number' => '[0-9]+',
+        'alpha' => '[a-zA-Z]+',
+        'alphanumeric' => '[a-zA-Z0-9]+',
     ];
 
 
@@ -267,9 +267,15 @@ class Getter
     private function addRegExpToParams(string $prefix, array $regExpGroups): string
     {
         foreach ($regExpGroups as $type => $regExpGroup) {
-            foreach ($regExpGroup as $regExp) {
-                $paramType = '{' . "$regExp:{$this->defaultParameterTypes[$type]}" . '}';
-                $prefix = str_replace('{' . $regExp . '}', $paramType, $prefix);
+            foreach ($regExpGroup as $paramName => $regExp) {
+                if ('regExp' == $type) {
+                    // Handle whereNumber(), whereAlpha(), whereAlphanumeric() data
+                    $paramType = '{' . "$paramName:$regExp" . '}';
+                    $prefix = str_replace('{' . $paramName . '}', $paramType, $prefix);
+                } else {
+                    $paramType = '{' . "$regExp:{$this->defaultParameterTypes[$type]}" . '}';
+                    $prefix = str_replace('{' . $regExp . '}', $paramType, $prefix);
+                }
             }
         }
 

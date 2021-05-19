@@ -1,10 +1,37 @@
 # QuickRoute ChangeLog
 
+## v3.5 to v3.6
+### New Methods
+- RouteInterface::where(string|array $param, ?string $regExp = null): RouteInterface
+
+```php
+use QuickRoute\Route;
+
+Route::get('/users/{id}', 'a')->where('id', '[0-9]+');
+Route::get('/users/{user}/posts/{post}', 'Ctrl@method')->where([
+    'user' => '[a-zA-Z]+',
+    'post' => '[0-9]+'
+]);
+```
+
+### Bug fixes
+- Regular expression bug related to whereNumber(), whereAlpha(), whereAlphanumeric() methods has been fixed
+
+### Changes
+- RouteInterface::resource() gets one additional parameter
+<br/> You can now provide id parameter name
+
+```php
+use QuickRoute\Route;
+
+Route::resource('/users', 'UserController', 'userId', true);
+// /users/{userId:[0-9]+}
+```
+
 ## v3.4 to v3.5
 ### New Methods
 - RouteInterface::whereNumber(string $param): RouteInterface
 - RouteInterface::whereAlpha(string $param): RouteInterface
-- RouteInterface::whereAlphanumeric(string $param): RouteInterface
 - RouteInterface::whereAlphanumeric(string $param): RouteInterface
 - Dispatcher::collectRoutes(array $routesInfo = []): Dispatcher
 - Dispatcher::collectRoutesFile(string $filePath, array $routesInfo = []): Dispatcher
