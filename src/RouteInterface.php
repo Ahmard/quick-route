@@ -111,22 +111,30 @@ interface RouteInterface
 
     /**
      * Register route to multiple http verbs
-     * @param array|string $methods
+     * @param array $methods
      * @param string $uri
      * @param callable|mixed $handler
      * @return RouteInterface
      */
-    public function match($methods, string $uri, $handler): RouteInterface;
+    public function match(array $methods, string $uri, $handler): RouteInterface;
 
     /**
      * Register multiple paths to single handler
      *
-     * @param string|array $paths
+     * @param array $paths
      * @param string $method
      * @param callable|mixed $handler
      * @return RouteInterface
      */
-    public function any($paths, string $method, $handler): RouteInterface;
+    public function any(array $paths, string $method, $handler): RouteInterface;
+
+    /**
+     * @param array $methods
+     * @param array $paths
+     * @param callable|mixed $handler
+     * @return RouteInterface
+     */
+    public function matchAny(array $methods, array $paths, $handler): RouteInterface;
 
     /**
      * This single route declaration creates multiple routes to handle a variety of actions on the resource.

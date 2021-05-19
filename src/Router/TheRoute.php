@@ -66,39 +66,48 @@ class TheRoute implements RouteInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function match($methods, string $uri, $handler): RouteInterface
+    public function match(array $methods, string $uri, $handler): RouteInterface
     {
-        if (is_array($methods)) {
-            foreach ($methods as $method) {
-                $method = strtolower($method);
-                $route = new TheRoute($this);
-                Route::push($route);
-                $route->$method($uri, $handler);
-            }
-
-            return $this;
+        foreach ($methods as $method) {
+            $method = strtolower($method);
+            $route = new TheRoute($this);
+            Route::push($route);
+            $route->$method($uri, $handler);
         }
 
-        return $this->addRoute($methods, $uri, $handler);
+        return $this;
     }
 
     /**
      * @inheritDoc
      */
-    public function any($paths, string $method, $handler): RouteInterface
+    public function any(array $paths, string $method, $handler): RouteInterface
     {
-        if (is_array($paths)) {
-            foreach ($paths as $path) {
+        foreach ($paths as $path) {
+            $method = strtolower($method);
+            $route = new TheRoute($this);
+            Route::push($route);
+            $route->$method($path, $handler);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function matchAny(array $methods, array $paths, $handler): RouteInterface
+    {
+        foreach ($methods as $method) {
+            foreach ($paths as $path){
                 $method = strtolower($method);
                 $route = new TheRoute($this);
                 Route::push($route);
                 $route->$method($path, $handler);
             }
-
-            return $this;
         }
 
-        return $this->addRoute($method, $paths, $handler);
+        return $this;
     }
 
     /**

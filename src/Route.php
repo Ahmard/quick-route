@@ -20,8 +20,9 @@ use QuickRoute\Router\TheRoute;
  * @method static TheRoute patch(string $uri, callable|mixed $handler) Register this route as PATCH
  * @method static TheRoute delete(string $uri, callable|mixed $handler) Register this route as DELETE
  * @method static TheRoute head(string $uri, callable|mixed $handler) Register route to multiple http verbs
- * @method static TheRoute match(array|string $methods, string $uri, callable|mixed $handler) Register this route as HEAD
+ * @method static TheRoute match(array|string $methods, string $uri, callable|mixed $handler) Register single handle to multiple methods
  * @method static TheRoute any(array|string $paths, string $method, callable|mixed $handler) Register multiple paths to single handler
+ * @method static TheRoute matchAny(array|string $methods, array|string $paths, callable|mixed $handler) Register multiple methods and paths to single handle
  * @method static TheRoute resource(string $route, string $controller, string $idParameterName = 'id', bool $integerId = true) A single to handle variety of actions on the resource.
  * @method static TheRoute addField(string $name, callable|mixed $handler) Add field of data route collection
  */

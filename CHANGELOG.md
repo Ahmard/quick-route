@@ -1,8 +1,32 @@
 # QuickRoute ChangeLog
 
+## v3.6 to v3.7
+### New Methods
+- RouteInterface::matchAny(array $methods, array $paths, $handler): RouteInterface - Generate multiple routes using multiple method and path but single handle
+- DispatchResult::route(string $routeName): ?array - This is to find route by its name
+- DispatchResult::uri(string $routeName): ?string - Generate route uri using route's name
+
+```php
+use QuickRoute\Route;
+
+Route::matchAny(
+    ['get', 'post'], 
+    ['/customer/login', '/admin/login'],
+    'MainController@index'
+);
+
+//Which is equivalent to:
+Route::get('/customer/login', 'MainController@index');
+Route::post('/customer/login', 'MainController@index');
+Route::get('/admin/login', 'MainController@index');
+Route::post('/admin/login', 'MainController@index');
+```
+
+
 ## v3.5 to v3.6
 ### New Methods
 - RouteInterface::where(string|array $param, ?string $regExp = null): RouteInterface
+- RouteInterface::matchAny(array $methods, array $paths, $handler): RouteInterface
 
 ```php
 use QuickRoute\Route;

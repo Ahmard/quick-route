@@ -161,6 +161,24 @@ $dispatchResult2 = Dispatcher::create($collector)
     ->dispatch('get', '/admin/login');
 ```
 
+#### Route::matchAny()
+
+```php
+use QuickRoute\Route;
+
+Route::matchAny(
+    ['get', 'post'], 
+    ['/customer/login', '/admin/login'],
+    'MainController@index'
+);
+
+//Which is equivalent to:
+Route::get('/customer/login', 'MainController@index');
+Route::post('/customer/login', 'MainController@index');
+Route::get('/admin/login', 'MainController@index');
+Route::post('/admin/login', 'MainController@index');
+```
+
 #### Route::resource()
 
 ```php
