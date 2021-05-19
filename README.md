@@ -296,7 +296,7 @@ Route::get('/users', 'Controller@method')->name('users.index');
 
 $collector = Collector::create()->collect();
 echo $collector->uri('users.index');  // => /users
-$collector->route('users.index'); // => Array of route data
+$collector->route('users.index'); // => Instance of QuickRoute\Route\RouteData
 ```
 
 #### Note
