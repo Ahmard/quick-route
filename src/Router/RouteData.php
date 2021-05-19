@@ -88,11 +88,16 @@ class RouteData implements JsonSerializable
 
     /**
      * Get route fields
-     * @return array<mixed>
+     * @return array
      */
     public function getFields(): array
     {
         return $this->routeData['fields'] ?? [];
+    }
+
+    public function getRegExp(): array
+    {
+        return $this->routeData['parameterTypes'] ?? [];
     }
 
     /**

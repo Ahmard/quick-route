@@ -93,7 +93,7 @@ class CollectorTest extends TestCase
 
         self::assertTrue($result->isFound());
         self::assertIsArray($route);
-        self::assertSame('Controller@method', $route['handler'] ?? null);
+        self::assertSame('Controller@method', $route->getHandler() ?? null);
         self::assertSame('/users/1/ahmard', $uri);
     }
 

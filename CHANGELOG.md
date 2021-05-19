@@ -5,6 +5,7 @@
 - RouteInterface::matchAny(array $methods, array $paths, $handler): RouteInterface - Generate multiple routes using multiple method and path but single handle
 - Collector::route(string $routeName): ?array - This is to find route by its name
 - Collector::uri(string $routeName): ?string - Generate route uri using route's name
+- RouteData::getRegExp() - This will return regular expression defined within the route's prefix/pth 
 
 #### RouteInterface::matchAny()
 ```php
@@ -22,7 +23,7 @@ Route::post('/customer/login', 'MainController@index');
 Route::get('/admin/login', 'MainController@index');
 Route::post('/admin/login', 'MainController@index');
 ```
-#### Finding route & generating route uri
+#### Finding route & generating route uri 
 
 ```php
 use QuickRoute\Route;
