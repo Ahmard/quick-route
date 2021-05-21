@@ -1,0 +1,102 @@
+[
+    {
+        "prefix": "\/api\/notes",
+        "append": "",
+        "prepend": "",
+        "namespace": "",
+        "name": "note.store",
+        "handler": [
+            "NoteController",
+            "store"
+        ],
+        "method": "POST",
+        "middleware": [],
+        "fields": [],
+        "parameterTypes": {
+            "number": [],
+            "alpha": [],
+            "alphanumeric": [],
+            "regExp": []
+        }
+    },
+    {
+        "prefix": "\/api\/notes",
+        "append": "",
+        "prepend": "",
+        "namespace": "",
+        "name": "note.destroy_all",
+        "handler": [
+            "NoteController",
+            "destroyAll"
+        ],
+        "method": "DELETE",
+        "middleware": [],
+        "fields": [],
+        "parameterTypes": {
+            "number": [],
+            "alpha": [],
+            "alphanumeric": [],
+            "regExp": []
+        }
+    },
+    {
+        "prefix": "\/api\/notes\/{id}",
+        "append": "",
+        "prepend": "",
+        "namespace": "",
+        "name": "note.show",
+        "handler": [
+            "NoteController",
+            "show"
+        ],
+        "method": "GET",
+        "middleware": [],
+        "fields": [],
+        "parameterTypes": {
+            "number": [],
+            "alpha": [],
+            "alphanumeric": [],
+            "regExp": []
+        }
+    },
+    {
+        "prefix": "\/api\/notes\/{id}",
+        "append": "",
+        "prepend": "",
+        "namespace": "",
+        "name": "note.update",
+        "handler": [
+            "NoteController",
+            "update"
+        ],
+        "method": "PATCH",
+        "middleware": [],
+        "fields": [],
+        "parameterTypes": {
+            "number": [],
+            "alpha": [],
+            "alphanumeric": [],
+            "regExp": []
+        }
+    },
+    {
+        "prefix": "\/api\/notes\/{id}",
+        "append": "",
+        "prepend": "",
+        "namespace": "",
+        "name": "note.destroy",
+        "handler": [
+            "NoteController",
+            "destroy"
+        ],
+        "method": "DELETE",
+        "middleware": [],
+        "fields": [],
+        "parameterTypes": {
+            "number": [],
+            "alpha": [],
+            "alphanumeric": [],
+            "regExp": []
+        }
+    }
+]

@@ -135,7 +135,7 @@ class TheRoute implements RouteInterface, JsonSerializable
         $route->get("{$uri}/create", [$controller, 'create'])->name("{$uri}.create");
         Route::push($route);
 
-        //  POST /whatever/create
+        //  POST /whatever
         $route = new TheRoute($this);
         $route->post("{$uri}", [$controller, 'store'])->name("{$uri}.store");
         Route::push($route);
