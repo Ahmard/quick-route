@@ -95,42 +95,42 @@ class Crud
         //  GET /whatever
         if (!in_array('index', $this->disabledRoutes)) {
             $route = new TheRoute();
-            $route->get($this->uri, [$this->controller, 'index'])->name("index");
+            $route->get($this->uri, [$this->controller, 'index'])->name('index');
             Route::push($route);
         }
 
         //  POST /whatever
         if (!in_array('store', $this->disabledRoutes)) {
             $route = new TheRoute();
-            $route->post("{$this->uri}", [$this->controller, 'store'])->name("store");
+            $route->post($this->uri, [$this->controller, 'store'])->name('store');
             Route::push($route);
         }
 
         //  DELETE /whatever
         if (!in_array('destroy_all', $this->disabledRoutes)) {
             $route = new TheRoute();
-            $route->delete("{$this->uri}", [$this->controller, 'destroyAll'])->name("destroy_all");
+            $route->delete($this->uri, [$this->controller, 'destroyAll'])->name('destroy_all');
             Route::push($route);
         }
 
         //  GET /whatever/{$id}
         if (!in_array('show', $this->disabledRoutes)) {
             $route = new TheRoute();
-            $route->get("{$this->uri}/{$idParam}", [$this->controller, 'show'])->name("show");
+            $route->get("$this->uri/$idParam", [$this->controller, 'show'])->name('show');
             Route::push($route);
         }
 
         //  PATCH /whatever/{$id}
         if (!in_array('update', $this->disabledRoutes)) {
             $route = new TheRoute();
-            $route->put("{$this->uri}/{$idParam}", [$this->controller, 'update'])->name("update");
+            $route->put("$this->uri/$idParam", [$this->controller, 'update'])->name('update');
             Route::push($route);
         }
 
         //  DELETE /whatever/{$id}
         if (!in_array('destroy', $this->disabledRoutes)) {
             $route = new TheRoute();
-            $route->delete("{$this->uri}/{$idParam}", [$this->controller, 'destroy'])->name("destroy");
+            $route->delete("$this->uri/$idParam", [$this->controller, 'destroy'])->name('destroy');
             Route::push($route);
         }
     }

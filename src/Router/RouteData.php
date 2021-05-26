@@ -95,6 +95,11 @@ class RouteData implements JsonSerializable
         return $this->routeData['fields'] ?? [];
     }
 
+    /**
+     * Gets regular expressions associated with this route
+     *
+     * @return array
+     */
     public function getRegExp(): array
     {
         return $this->routeData['parameterTypes'] ?? [];

@@ -121,48 +121,48 @@ class TheRoute implements RouteInterface, JsonSerializable
         bool $integerId = true
     ): RouteInterface
     {
-        $id = $integerId
+        $idParam = $integerId
             ? '{' . "$idParameterName:[0-9]+" . '}'
             : '{' . "$idParameterName" . '}';
 
         //  GET /whatever
         $route = new TheRoute($this);
-        $route->get($uri, [$controller, 'index'])->name("{$uri}.index");
+        $route->get($uri, [$controller, 'index'])->name('index');
         Route::push($route);
 
         //  GET /whatever/create
         $route = new TheRoute($this);
-        $route->get("{$uri}/create", [$controller, 'create'])->name("{$uri}.create");
+        $route->get("$uri/create", [$controller, 'create'])->name('create');
         Route::push($route);
 
         //  POST /whatever
         $route = new TheRoute($this);
-        $route->post("{$uri}", [$controller, 'store'])->name("{$uri}.store");
+        $route->post($uri, [$controller, 'store'])->name('store');
         Route::push($route);
 
         //  GET /whatever/{$id}
         $route = new TheRoute($this);
-        $route->get("{$uri}/{$id}", [$controller, 'show'])->name("{$uri}.show");
+        $route->get("$uri/$idParam", [$controller, 'show'])->name('show');
         Route::push($route);
 
         //  GET /whatever/{$id}/edit
         $route = new TheRoute($this);
-        $route->get("{$uri}/{$id}/edit", [$controller, 'edit'])->name("{$uri}.edit");
+        $route->get("$uri/$idParam/edit", [$controller, 'edit'])->name('edit');
         Route::push($route);
 
         //  PUT /whatever/{$id}
         $route = new TheRoute($this);
-        $route->put("{$uri}/{$id}", [$controller, 'update'])->name("{$uri}.update");
+        $route->put("$uri/$idParam", [$controller, 'update'])->name('update');
         Route::push($route);
 
         //  PATCH /whatever/{$id}
         $route = new TheRoute($this);
-        $route->patch("{$uri}/{$id}", [$controller, 'update'])->name("{$uri}.update");
+        $route->patch("$uri/$idParam", [$controller, 'update'])->name('update');
         Route::push($route);
 
         //  DELETE /whatever/{$id}
         $route = new TheRoute($this);
-        $route->delete("{$uri}/{$id}", [$controller, 'destroy'])->name("{$uri}.destroy");
+        $route->delete("$uri/$idParam", [$controller, 'destroy'])->name('destroy');
         Route::push($route);
 
         return $this;
