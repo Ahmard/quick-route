@@ -209,6 +209,7 @@ Crud::create('/', 'Controller')->go();
 ```
 Code above will produce below routes <br/>
 ![alt text](crud-definition.png)
+<br/>
 **Why not use Route::resource()?**<br/>
 Crud creator generates 6 routes, one of the routes which deletes all record in the endpoint.<br/>
 With Crud creator you can choose which routes to create or not.
