@@ -303,27 +303,27 @@ class TheRoute implements RouteInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function whereNumber(string $parameterName): RouteInterface
+    public function whereNumber(string $param): RouteInterface
     {
-        array_push($this->parameterTypes['number'], $parameterName);
+        array_push($this->parameterTypes['number'], $param);
         return $this;
     }
 
     /**
      * @inheritDoc
      */
-    public function whereAlpha(string $parameterName): RouteInterface
+    public function whereAlpha(string $param): RouteInterface
     {
-        array_push($this->parameterTypes['alpha'], $parameterName);
+        array_push($this->parameterTypes['alpha'], $param);
         return $this;
     }
 
     /**
      * @inheritDoc
      */
-    public function whereAlphaNumeric(string $parameterName): RouteInterface
+    public function whereAlphaNumeric(string $param): RouteInterface
     {
-        array_push($this->parameterTypes['alphanumeric'], $parameterName);
+        array_push($this->parameterTypes['alphanumeric'], $param);
         return $this;
     }
 

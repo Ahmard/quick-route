@@ -164,26 +164,26 @@ interface RouteInterface
     /**
      * Indicates that the given route parameters must be number.
      *
-     * @param string $parameterName
+     * @param string $param
      * @return RouteInterface
      */
-    public function whereNumber(string $parameterName): RouteInterface;
+    public function whereNumber(string $param): RouteInterface;
 
     /**
      * Indicates that the given route parameters must be alphabetic.
      *
-     * @param string $parameterName
+     * @param string $param
      * @return RouteInterface
      */
-    public function whereAlpha(string $parameterName): RouteInterface;
+    public function whereAlpha(string $param): RouteInterface;
 
     /**
      * Indicates that the given route parameters must be alphanumeric.
      *
-     * @param string $parameterName
+     * @param string $param
      * @return RouteInterface
      */
-    public function whereAlphaNumeric(string $parameterName): RouteInterface;
+    public function whereAlphaNumeric(string $param): RouteInterface;
 
     /**
      * Retrieve registered routes
