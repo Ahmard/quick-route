@@ -52,6 +52,7 @@ class Route
 
     /**
      * Add route class to list of routes
+     *
      * @param TheRoute $route
      */
     public static function push(TheRoute $route): void
@@ -61,6 +62,7 @@ class Route
 
     /**
      * Create fresh router
+     *
      * @return TheRoute
      */
     public static function create(): TheRoute
@@ -80,6 +82,7 @@ class Route
 
     /**
      * Get all registered routers
+     *
      * @return TheRoute[]
      */
     public static function getRoutes(): array

@@ -200,6 +200,42 @@ Route::resource('photos', 'App\Http\Controller\PhotoController');
 Code above will produce below routes <br/>
 ![alt text](resource-http-verbs.png)
 
+#### Crud::create()
+
+```php
+use QuickRoute\Crud;
+
+Crud::create('/', 'Controller')->go();
+```
+Code above will produce below routes <br/>
+![alt text](crud-definition.png)
+<br/>
+**Why not use Route::resource()?**<br/>
+Crud creator generates 6 routes, one of the routes which deletes all record in the endpoint.<br/>
+With Crud creator you can choose which routes to create or not.
+
+```php
+use QuickRoute\Crud;
+
+//Disabling route creation
+Crud::create('/', 'Controller')
+    ->disableIndexRoute()
+    ->disableStoreRoute()
+    ->disableDestroyAllRoute()
+    ->disableShowRoute()
+    ->disableUpdateRoute()
+    ->disableDestroyRoute()
+    ->go();
+
+//Specifying custom route parameter name 
+Crud::create('/', 'Controller')->parameter('userId');
+
+//Specify parameter type 
+Crud::create('/', 'Controller')->numericParameter();
+Crud::create('/', 'Controller')->alphabeticParameter();
+Crud::create('/', 'Controller')->alphaNumericParameter();
+```
+
 #### Routes as configuration
 
 ```php

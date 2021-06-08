@@ -1,3 +1,5 @@
 vendor
 .idea
 .phpunit.result.cache
+.routes.json
+.test.php

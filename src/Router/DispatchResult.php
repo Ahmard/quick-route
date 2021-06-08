@@ -5,7 +5,6 @@ namespace QuickRoute\Router;
 
 
 use FastRoute\Dispatcher as FastDispatcher;
-use InvalidArgumentException;
 
 class DispatchResult
 {

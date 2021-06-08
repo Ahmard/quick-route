@@ -21,7 +21,7 @@ class Getter
     private array $routes;
 
     /**
-     * @var mixed[]
+     * @var array
      */
     private array $routeDefaultData = [];
 
@@ -73,7 +73,7 @@ class Getter
     /**
      * Loop through routes
      * @param TheRoute[] $routes
-     * @return array<mixed>
+     * @return array
      */
     private function loop(array $routes): array
     {
@@ -106,8 +106,8 @@ class Getter
 
     /**
      * Build route structure
-     * @param array<mixed> $routes
-     * @param array<mixed> $parent
+     * @param array $routes
+     * @param array $parent
      */
     private function build(array $routes, array $parent = []): void
     {
