@@ -30,7 +30,7 @@ class Cache
                     foreach ($httpVerbs as &$verbRoutes) {
                         foreach ($verbRoutes as &$route) {
                             if (
-                                is_string($route['handler'])
+                                isset($route['handler']) && is_string($route['handler'])
                                 && '__closure__' == substr($route['handler'], 0, 11)
                             ) {
                                 $route['handler'] = unserialize(substr($route['handler'], 11));

@@ -130,7 +130,7 @@ class Collector
      * This will tell caching lib to not look closures.
      * @return $this
      */
-    public function cache(string $cacheFile, bool $hasClosures = true): self
+    public function cache(string $cacheFile, bool $hasClosures = false): self
     {
         $this->cacheFile = $cacheFile;
         $this->routesHasClosures = $hasClosures;
