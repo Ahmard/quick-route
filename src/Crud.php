@@ -77,10 +77,10 @@ class Crud
     /**
      * Mark parameter as of alphanumeric type
      *
-     * @param string|null $name
+     * @param string $name
      * @return $this
      */
-    public function alphaNumericParameter(?string $name = 'id'): Crud
+    public function alphaNumericParameter(string $name = 'id'): Crud
     {
         return $this->parameter($name, ':[a-zA-Z]+');
     }
