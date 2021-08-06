@@ -241,16 +241,6 @@ class RouteRegisterTest extends TestCase
         $this->resourceTester();
     }
 
-    public function testResourceWithCustomIdParamName(): void
-    {
-        $this->resourceTester('userId');
-    }
-
-    public function testResourceWithNonIntegerParam(): void
-    {
-        $this->resourceTester('userId', false);
-    }
-
     public function resourceTester(string $idParamName = 'id', bool $integerParam = true): void
     {
         $idParam = '';
@@ -292,10 +282,20 @@ class RouteRegisterTest extends TestCase
         self::assertSame('DELETE', $routes[7]['method']);
     }
 
+    public function testResourceWithCustomIdParamName(): void
+    {
+        $this->resourceTester('userId');
+    }
+
+    public function testResourceWithNonIntegerParam(): void
+    {
+        $this->resourceTester('userId', false);
+    }
+
     public function testMatchAny(): void
     {
         Route::restart();
-        Route::matchAny(['get', 'post'], ['/customer/login', '/admin/login'],'MainController@index');
+        Route::matchAny(['get', 'post'], ['/customer/login', '/admin/login'], 'MainController@index');
         $routes = Collector::create()->collect()->getCollectedRoutes();
 
         self::assertSame('GET', $routes[0]['method']);
@@ -306,6 +306,13 @@ class RouteRegisterTest extends TestCase
         self::assertSame('/customer/login', $routes[2]['prefix']);
         self::assertSame('POST', $routes[3]['method']);
         self::assertSame('/admin/login', $routes[3]['prefix']);
+    }
+
+    public function testControllerMethod(): void
+    {
+        Route::get('/', [1, 3]);
+        $result = Dispatcher::collectRoutes()->dispatch('GET', '/');
+        self::assertSame([1, 3], $result->getRoute()->getController());
     }
 
     protected function setUp(): void

@@ -79,9 +79,20 @@ class RouteData implements JsonSerializable
 
     /**
      * Get route handler
+     *
      * @return mixed|null
      */
     public function getHandler()
+    {
+        return $this->routeData['handler'] ?? null;
+    }
+
+    /**
+     * Get route controller, this method aliases getHandler()
+     *
+     * @return mixed|null
+     */
+    public function getController()
     {
         return $this->routeData['handler'] ?? null;
     }

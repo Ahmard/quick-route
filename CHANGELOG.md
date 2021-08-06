@@ -7,6 +7,7 @@
 - Collector::uri(string $routeName): ?string - Generate route uri using route's name
 - RouteData::getRegExp() - This will return regular expression defined within the route's prefix/pth 
 - RouteInterface::match() will now add route name based on the used request method
+- RouteData::getController() added to alias getHandler()
 
 #### RouteInterface::matchAny()
 ```php

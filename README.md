@@ -33,8 +33,8 @@ $dispatcher = Dispatcher::collectRoutes()
 //determine dispatch result
 switch (true) {
     case $dispatcher->isFound():
-        $handler = $dispatcher->getRoute()->getHandler();
-        $handler($dispatcher->getUrlParameters());
+        $controller = $dispatcher->getRoute()->getController();
+        $controller($dispatcher->getUrlParameters());
         break;
     case $dispatcher->isNotFound():
         echo "Page not found";
@@ -127,8 +127,8 @@ use QuickRoute\Router\Dispatcher;
 
 require 'vendor/autoload.php';
 
-$handler = fn() => print time();
-Route::match(['get', 'post'], '/user', $handler)
+$controller = fn() => print time();
+Route::match(['get', 'post'], '/user', $controller)
     ->middleware('auth')
     ->namespace('App')
     ->name('home');
@@ -159,9 +159,9 @@ use QuickRoute\Route;
 use QuickRoute\Router\Collector;
 use QuickRoute\Router\Dispatcher;
 
-$handler = fn() => print time();
+$controller = fn() => print time();
 
-Route::any(['/login', '/admin/login'], 'get', $handler);
+Route::any(['/login', '/admin/login'], 'get', $controller);
 
 $collector = Collector::create()->collect();
 
