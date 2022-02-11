@@ -28,10 +28,10 @@ interface RouteInterface
     public function namespace(string $namespace): RouteInterface;
 
     /** Set namespace to group of routes
-     * @param string $middleware
+     * @param string|array $middleware
      * @return RouteInterface
      */
-    public function middleware(string $middleware): RouteInterface;
+    public function middleware($middleware): RouteInterface;
 
     /** Set name to group of routes
      * @param string $name

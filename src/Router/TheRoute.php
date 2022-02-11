@@ -100,7 +100,7 @@ class TheRoute implements RouteInterface, JsonSerializable
     public function matchAny(array $methods, array $paths, $handler): RouteInterface
     {
         foreach ($methods as $method) {
-            foreach ($paths as $path){
+            foreach ($paths as $path) {
                 $method = strtolower($method);
                 $route = new TheRoute($this);
                 Route::push($route);
@@ -118,7 +118,7 @@ class TheRoute implements RouteInterface, JsonSerializable
         string $uri,
         string $controller,
         string $idParameterName = 'id',
-        bool $integerId = true
+        bool   $integerId = true
     ): RouteInterface
     {
         $idParam = $integerId
@@ -268,8 +268,13 @@ class TheRoute implements RouteInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    public function middleware(string $middleware): RouteInterface
+    public function middleware($middleware): RouteInterface
     {
+        if (is_array($middleware)) {
+            $this->middlewares = array_merge($this->middlewares, $middleware);
+            return $this;
+        }
+
         $this->middlewares[] = $middleware;
         return $this;
     }
@@ -305,7 +310,7 @@ class TheRoute implements RouteInterface, JsonSerializable
      */
     public function whereNumber(string $param): RouteInterface
     {
-        array_push($this->parameterTypes['number'], $param);
+        $this->parameterTypes['number'][] = $param;
         return $this;
     }
 
@@ -314,7 +319,7 @@ class TheRoute implements RouteInterface, JsonSerializable
      */
     public function whereAlpha(string $param): RouteInterface
     {
-        array_push($this->parameterTypes['alpha'], $param);
+        $this->parameterTypes['alpha'][] = $param;
         return $this;
     }
 
@@ -323,7 +328,7 @@ class TheRoute implements RouteInterface, JsonSerializable
      */
     public function whereAlphaNumeric(string $param): RouteInterface
     {
-        array_push($this->parameterTypes['alphanumeric'], $param);
+        $this->parameterTypes['alphanumeric'][] = $param;
         return $this;
     }
 

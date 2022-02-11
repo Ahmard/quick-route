@@ -236,6 +236,25 @@ class RouteRegisterTest extends TestCase
         self::assertSame(['admin', 'user'], $result2->getRoute()->getMiddleware());
     }
 
+    public function testArrayOfMiddlewares(): void
+    {
+        Route::restart();
+        Route::get('/', fn() => print time())->middleware('only');
+        Route::prefix('/admin')
+            ->middleware(['admin', 'super'])
+            ->group(function () {
+                Route::prefix('user')->group(function () {
+                    Route::get('/', fn() => print time())->middleware(['user', 'anonymous']);
+                });
+            });
+
+        $collector = Collector::create()->collect();
+        $result1 = Dispatcher::create($collector)->dispatch('get', '/');
+        $result2 = Dispatcher::create($collector)->dispatch('get', '/admin/user');
+        self::assertSame(['only'], $result1->getRoute()->getMiddleware());
+        self::assertSame(['admin', 'super', 'user', 'anonymous'], $result2->getRoute()->getMiddleware());
+    }
+
     public function testResource(): void
     {
         $this->resourceTester();
