@@ -1,5 +1,7 @@
-vendor
-.idea
-.phpunit.result.cache
-.routes.json
-.test.php
+/vendor
+/.idea
+
+/composer.lock
+/.phpunit.result.cache
+/.routes.json
+/.test.php

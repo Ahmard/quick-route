@@ -12,7 +12,7 @@ use QuickRoute\Router\TheRoute;
  * @method static TheRoute prepend(string $prefix) Prepend prefix to route
  * @method static TheRoute name(string $name) Name this route
  * @method static TheRoute namespace(string $namespace) Route namespace
- * @method static TheRoute middleware(string $middleware) Route middleware
+ * @method static TheRoute middleware(string|array $middleware) Route middleware
  * @method static TheRoute group(callable $closure) Group routes together
  * @method static TheRoute get(string $uri, callable|mixed $handler) Register this route as GET
  * @method static TheRoute post(string $uri, callable|mixed $handler) Register this route as POST

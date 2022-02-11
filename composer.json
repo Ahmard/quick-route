@@ -1,12 +1,12 @@
 {
     "name": "ahmard/quick-route",
-    "description": "Simple http router designed to look just like Laravel's router",
+    "description": "Simple http router designed to look just like Laravel router",
     "minimum-stability": "stable",
     "license": "MIT",
     "authors": [
         {
             "name": "Ahmad Mustapha",
-            "email": "ahmard06@gmail.com"
+            "email": "ahmardy@outlook.com"
         }
     ],
     "require": {
@@ -16,9 +16,9 @@
         "opis/closure": "^3.6"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9",
-        "phpstan/phpstan": "^0.12.64",
-        "symfony/var-dumper": "^5.2"
+        "phpunit/phpunit": "^9.5",
+        "phpstan/phpstan": "^1.4",
+        "symfony/var-dumper": "^6.0"
     },
     "autoload": {
         "psr-4": {
